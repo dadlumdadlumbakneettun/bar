@@ -1,1 +1,2273 @@
-<h1>Sitem Yayında!</h1>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bar Editörü Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ========== ROOT ========== */
+:root {
+  --app-bg: #0c0c10;
+  --panel-bg: #13131a;
+  --panel-bg2: #1a1a24;
+  --border: #2a2a3a;
+  --accent: #6c63ff;
+  --accent2: #ff6584;
+  --accent3: #43e97b;
+  --text: #e8e8f0;
+  --text-muted: #666680;
+  --text-dim: #9999b0;
+  --tab-active: #6c63ff;
+  --input-bg: #1e1e2e;
+  --input-border: #33334a;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --transition: 0.18s ease;
+  --panel-w: 320px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  display: flex;
+  height: 100vh;
+  background: var(--app-bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  width: var(--panel-w);
+  background: var(--panel-bg);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.sidebar.right {
+  border-right: none;
+  border-left: 1px solid var(--border);
+}
+
+.sidebar-header {
+  padding: 18px 20px 0;
+  background: var(--panel-bg);
+  flex-shrink: 0;
+}
+.sidebar-header h1 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-header h1 .logo-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  flex-shrink: 0;
+}
+
+/* ========== TAB NAVİGASYONU (Sol) ========== */
+.tab-nav {
+  display: flex;
+  gap: 2px;
+  padding: 12px 10px 0;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  flex: 1;
+  min-width: 60px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 7px 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  transition: var(--transition);
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 14px rgba(108,99,255,0.4); }
+
+/* ========== TAB PANELLERİ ========== */
+.tab-panels { flex: 1; overflow-y: auto; padding: 14px 16px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ========== SECTION BAŞLIKLARI ========== */
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 18px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 3px; height: 12px;
+  border-radius: 2px;
+  background: var(--accent);
+  display: block;
+}
+.section-title:first-child { margin-top: 4px; }
+
+/* ========== KONTROL GRUPLARI ========== */
+.cg { margin-bottom: 10px; }
+.cg label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.cg label .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(108,99,255,0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* Range Input */
+input[type=range] {
+  width: 100%; height: 4px; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  background: var(--input-bg);
+  border-radius: 10px;
+  outline: none;
+  border: 1px solid var(--input-border);
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(108,99,255,0.6);
+  transition: 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* Color Input */
+.color-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+input[type=color] {
+  width: 38px; height: 34px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+}
+.color-hex {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  outline: none;
+  transition: var(--transition);
+}
+.color-hex:focus { border-color: var(--accent); }
+
+/* Text / Number Input */
+input[type=text], input[type=number] {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  padding: 8px 11px;
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: var(--transition);
+}
+input[type=text]:focus, input[type=number]:focus { border-color: var(--accent); }
+
+/* Select */
+select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  padding: 8px 11px;
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+select:focus { border-color: var(--accent); }
+
+/* Toggle Checkbox */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.toggle-row span { font-size: 12px; color: var(--text-dim); font-weight: 500; }
+.toggle-wrap { position: relative; width: 40px; height: 22px; }
+.toggle-wrap input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 2px; top: 2px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  transition: 0.25s;
+}
+.toggle-wrap input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+.toggle-wrap input:checked + .toggle-slider::before { transform: translateX(18px); background: #fff; }
+
+/* Gradient Row */
+.gradient-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.gradient-row input[type=color] { flex: 1; width: auto; }
+
+/* Buttons */
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: var(--transition);
+  margin-bottom: 8px;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #7b74ff; box-shadow: 0 0 18px rgba(108,99,255,0.4); }
+.btn-danger { background: rgba(255,101,132,0.15); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
+.btn-danger:hover { background: rgba(255,101,132,0.25); }
+.btn-secondary { background: var(--panel-bg2); color: var(--text-dim); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+.btn-green { background: rgba(67,233,123,0.15); color: var(--accent3); border: 1px solid rgba(67,233,123,0.3); }
+.btn-green:hover { background: rgba(67,233,123,0.25); }
+
+/* Textarea */
+textarea {
+  width: 100%;
+  background: #080810;
+  border: 1px solid var(--border);
+  color: #43e97b;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  resize: vertical;
+  outline: none;
+  height: 130px;
+  transition: var(--transition);
+}
+textarea:focus { border-color: var(--accent3); }
+
+/* Shape Presets */
+.shape-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+.shape-btn {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-dim);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: 'Outfit', sans-serif;
+  text-align: center;
+  transition: var(--transition);
+}
+.shape-btn:hover, .shape-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(108,99,255,0.1); }
+
+/* Milestone Tags */
+.milestone-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.milestone-item {
+  display: flex; gap: 6px; align-items: center;
+}
+.milestone-item input[type=number] { width: 70px; }
+.milestone-item input[type=color] { width: 32px; height: 28px; }
+.milestone-item .btn-danger { width: 28px; height: 28px; padding: 0; margin: 0; border-radius: var(--radius-sm); font-size: 14px; }
+
+/* ========== ÖNIZLEME ALANI ========== */
+.preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: var(--app-bg);
+  overflow: hidden;
+}
+
+/* Grid Arka Plan */
+.preview-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(108,99,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108,99,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* Preview BG Seçici */
+.bg-switcher {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  background: rgba(0,0,0,0.5);
+  padding: 6px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  z-index: 50;
+}
+.bg-swatch {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.15s;
+}
+.bg-swatch:hover, .bg-swatch.active { border-color: var(--accent); transform: scale(1.15); }
+
+/* Zoom butonları */
+.preview-controls {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  gap: 6px;
+  z-index: 50;
+}
+.preview-ctrl-btn {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+.preview-ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Widget Wrapper */
+.widget-canvas {
+  transform-origin: center center;
+  transition: transform 0.2s ease;
+}
+
+/* ========== WIDGET STİLLERİ ========== */
+.widget-wrapper {
+  --width: 480px; --height: 60px; --radius: 14px;
+  --bar-bg: rgba(255,255,255,0.08);
+  --bar-fill: #6c63ff;
+  --bar-fill2: #a855f7;
+  --text-color: #fff;
+  --center-text-color: #fff;
+  --stripe-color: rgba(255,255,255,0.15);
+  --glow-color: rgba(108,99,255,0.6);
+  --border-color: rgba(255,255,255,0.15);
+  --border-width: 1px;
+  --particle-color: 255,255,255;
+  font-family: 'Outfit', sans-serif;
+}
+
+.progress-container {
+  width: var(--width);
+  height: var(--height);
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--bar-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  border: var(--border-width) solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+/* Glow */
+.glow-ring {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 30px var(--glow-color);
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.glow-active .glow-ring { opacity: 1; }
+
+/* Partiküller */
+.particles {
+  position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+  z-index: 5; pointer-events: none;
+}
+.particle {
+  position: absolute; border-radius: 50%; opacity: 0.8; filter: blur(0.5px);
+  background: rgb(var(--particle-color));
+}
+@keyframes floatAnim {
+  0% { transform: translate(0,0) scale(1); opacity: 0.2; }
+  50% { transform: translate(15px,-12px) scale(1.3); opacity: 0.9; }
+  100% { transform: translate(0,0) scale(1); opacity: 0.2; }
+}
+@keyframes floatAnim2 {
+  0% { transform: translate(0,0) rotate(0deg); opacity: 0.15; }
+  33% { transform: translate(-12px,8px) rotate(120deg); opacity: 0.8; }
+  66% { transform: translate(10px,-5px) rotate(240deg); opacity: 0.4; }
+  100% { transform: translate(0,0) rotate(360deg); opacity: 0.15; }
+}
+/* Bouncing particle - JS ile yönetilir, CSS animasyonu yok */
+
+.bar-track { width: 100%; height: 100%; position: relative; z-index: 1; }
+
+.progress-fill {
+  height: 100%;
+  background: var(--bar-fill);
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill.gradient-fill {
+  background: linear-gradient(90deg, var(--bar-fill), var(--bar-fill2));
+}
+
+.progress-fill.striped {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--stripe-color) 0px, var(--stripe-color) 10px,
+    transparent 10px, transparent 20px
+  );
+  background-color: var(--bar-fill);
+}
+
+.progress-fill.gradient-fill.striped {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--stripe-color) 0px, var(--stripe-color) 10px,
+    transparent 10px, transparent 20px
+  );
+}
+
+.progress-fill.animated-stripe { animation: moveStripes 0.8s linear infinite; }
+@keyframes moveStripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 28px 0; }
+}
+
+/* Pulse animasyonu */
+@keyframes pulseGlow {
+  0%,100% { box-shadow: inset 0 0 0 0 transparent; }
+  50% { box-shadow: inset 0 0 var(--pulse-spread, 20px) var(--pulse-color, rgba(255,255,255,0.2)); }
+}
+.progress-fill.pulse-anim { animation: pulseGlow var(--pulse-speed, 2s) ease-in-out infinite; }
+
+/* Shimmer */
+@keyframes shimmerAnim {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.progress-fill.shimmer-anim::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--shimmer-color, rgba(255,255,255,0.25)) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmerAnim var(--shimmer-speed, 2.5s) ease-in-out infinite;
+}
+
+/* İçe gölge */
+.bar-inner-shadow::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), inset 0 -1px 3px rgba(255,255,255,0.05);
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* Milestone işaretçileri */
+.milestone-marker {
+  position: absolute;
+  top: 0; height: 100%;
+  width: 2px;
+  background: rgba(255,255,255,0.4);
+  z-index: 8;
+  pointer-events: none;
+}
+.milestone-marker::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Yansıma */
+.reflection {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 50%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.06), transparent);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 12;
+}
+
+/* Yazılar */
+.center-label {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  color: var(--center-text-color); font-size: 13px; letter-spacing: 1.5px;
+  font-weight: 700; z-index: 10; pointer-events: none; text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5); white-space: nowrap;
+}
+.current-in-bar {
+  position: absolute; left: 14px;
+  color: var(--text-color); font-size: 18px; font-weight: 800;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6); z-index: 10; white-space: nowrap;
+}
+.goal-top {
+  position: absolute; right: 14px;
+  color: var(--text-color); font-size: 18px; font-weight: 800;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6); z-index: 10; white-space: nowrap;
+}
+.percentage-badge {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  background: transparent; color: var(--text-color);
+  font-size: 14px; font-weight: 800; padding: 0;
+  border-radius: 0; z-index: 10; pointer-events: none;
+  font-family: 'JetBrains Mono', monospace;
+  border: none;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+}
+
+/* Test slider alanı */
+.test-area {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(500px, 80%);
+  background: rgba(19,19,26,0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  z-index: 50;
+}
+.test-area .cg { margin-bottom: 0; }
+
+/* ========== SAĞ PANEL ========== */
+.right-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+}
+
+.preset-save-area { margin-bottom: 18px; }
+.preset-save-area input[type=text] { margin-bottom: 8px; }
+
+/* Önizleme kartları */
+.preset-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.preset-card {
+  background: var(--panel-bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.preset-card:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108,99,255,0.2); }
+
+.preset-card-preview {
+  width: 100%;
+  height: 50px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: #08080f;
+}
+
+.preset-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+}
+.preset-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.preset-card-actions {
+  display: flex;
+  gap: 4px;
+}
+.preset-card-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 26px; height: 26px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.preset-card-btn:hover { border-color: var(--accent); color: var(--accent); }
+.preset-card-btn.del:hover { border-color: var(--accent2); color: var(--accent2); }
+
+/* Küçük bar önizleme (canvas içi) */
+.mini-bar { position: absolute; height: 100%; left: 0; top: 0; }
+
+/* Import/Export */
+.io-section { margin-top: 20px; }
+.io-section h2 {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+/* Status bar */
+.status-bar {
+  height: 28px;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 18px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); box-shadow: 0 0 8px var(--accent3); }
+.status-item { display: flex; align-items: center; gap: 5px; }
+.status-item span.accent { color: var(--accent); }
+
+/* Kopya bileşimi için export popup */
+.toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(108,99,255,0.5);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Empty preset state */
+.empty-state {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.empty-state .icon { font-size: 32px; margin-bottom: 10px; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* Tooltip */
+.tip {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== SOL PANEL ========== -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1><span class="logo-dot"></span>Bar Editörü Pro</h1>
+    <div class="tab-nav" id="tab-nav">
+      <button class="tab-btn active" data-tab="t-shape">Şekil</button>
+      <button class="tab-btn" data-tab="t-color">Renk</button>
+      <button class="tab-btn" data-tab="t-fx">Efekt</button>
+      <button class="tab-btn" data-tab="t-text">Yazı</button>
+      <button class="tab-btn" data-tab="t-adv">Gelişmiş</button>
+    </div>
+  </div>
+
+  <div class="tab-panels">
+
+    <!-- SEKME: ŞEKIL -->
+    <div class="tab-panel active" id="t-shape">
+      <div class="section-title">Boyutlar</div>
+      <div class="cg">
+        <label>Genişlik <span class="val" id="vWidth">480</span> px</label>
+        <input type="range" id="cWidth" min="150" max="900" value="480">
+      </div>
+      <div class="cg">
+        <label>Yükseklik <span class="val" id="vHeight">60</span> px</label>
+        <input type="range" id="cHeight" min="20" max="200" value="60">
+      </div>
+      <div class="cg">
+        <label>Köşe Yuvarlaklığı <span class="val" id="vRadius">14</span> px</label>
+        <input type="range" id="cRadius" min="0" max="100" value="14">
+      </div>
+
+      <div class="section-title">Hızlı Şekil</div>
+      <div class="shape-grid">
+        <div class="shape-btn" onclick="applyShape('square')">▬ Köşeli</div>
+        <div class="shape-btn active" onclick="applyShape('rounded')">▬ Yuvarlak</div>
+        <div class="shape-btn" onclick="applyShape('pill')">● Hap</div>
+        <div class="shape-btn" onclick="applyShape('heart')">♥ Kalp</div>
+      </div>
+
+      <div class="section-title">Kenarlık</div>
+      <div class="cg">
+        <label>Kenarlık Kalınlığı <span class="val" id="vBorderW">1</span> px</label>
+        <input type="range" id="cBorderW" min="0" max="6" value="1">
+      </div>
+      <div class="cg">
+        <label>Kenarlık Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cBorderColor" value="#ffffff">
+          <input type="text" class="color-hex" id="cBorderColorHex" value="#ffffff">
+        </div>
+      </div>
+      <div class="cg">
+        <label>Kenarlık Şeffaflığı <span class="val" id="vBorderOp">15</span>%</label>
+        <input type="range" id="cBorderOp" min="0" max="100" value="15">
+      </div>
+
+      <div class="section-title">Değerler</div>
+      <div class="cg">
+        <label>Mevcut Değer</label>
+        <input type="number" id="cCurrentVal" value="50" min="0">
+      </div>
+      <div class="cg">
+        <label>Hedef Değer</label>
+        <input type="number" id="cGoalVal" value="100" min="1">
+      </div>
+      <div class="cg">
+        <label>Sayı Formatı</label>
+        <select id="cNumFormat">
+          <option value="normal">123456</option>
+          <option value="locale">123,456</option>
+          <option value="k">123K</option>
+          <option value="m">1.2M</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SEKME: RENK -->
+    <div class="tab-panel" id="t-color">
+      <div class="section-title">Arka Plan</div>
+      <div class="cg">
+        <label>Arka Plan Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cBgColor" value="#ffffff">
+          <input type="text" class="color-hex" id="cBgColorHex" value="#ffffff">
+        </div>
+      </div>
+      <div class="cg">
+        <label>Şeffaflık <span class="val" id="vBgOp">8</span>%</label>
+        <input type="range" id="cBgOp" min="0" max="100" value="8">
+      </div>
+
+      <div class="section-title">Dolgu Rengi</div>
+      <div class="toggle-row">
+        <span>Degrade (Gradient) Kullan</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cUseGradient"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="cg" id="fillSolidGroup">
+        <label>Dolgu Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cFillColor" value="#6c63ff">
+          <input type="text" class="color-hex" id="cFillColorHex" value="#6c63ff">
+        </div>
+      </div>
+      <div class="cg" id="fillGradientGroup" style="display:none">
+        <label>Başlangıç Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cFillColor1" value="#6c63ff">
+          <input type="text" class="color-hex" id="cFillColor1Hex" value="#6c63ff">
+        </div>
+        <label style="margin-top:8px;">Bitiş Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cFillColor2" value="#a855f7">
+          <input type="text" class="color-hex" id="cFillColor2Hex" value="#a855f7">
+        </div>
+        <label style="margin-top:8px;">Gradient Açısı <span class="val" id="vGradAngle">90</span>°</label>
+        <input type="range" id="cGradAngle" min="0" max="360" value="90">
+      </div>
+
+      <div class="section-title">Şeritler</div>
+      <div class="toggle-row">
+        <span>Şeritleri Göster</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cStripeEnable" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div id="stripeOptions">
+        <div class="toggle-row">
+          <span>Hareketli Şeritler</span>
+          <label class="toggle-wrap"><input type="checkbox" id="cStripeAnim"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="cg">
+          <label>Şerit Rengi</label>
+          <div class="color-row">
+            <input type="color" id="cStripeColor" value="#ffffff">
+            <input type="text" class="color-hex" id="cStripeColorHex" value="#ffffff">
+          </div>
+        </div>
+        <div class="cg">
+          <label>Şerit Şeffaflığı <span class="val" id="vStripeOp">15</span>%</label>
+          <input type="range" id="cStripeOp" min="0" max="100" value="15">
+        </div>
+        <div class="cg">
+          <label>Şerit Açısı <span class="val" id="vStripeAngle">45</span>°</label>
+          <input type="range" id="cStripeAngle" min="-90" max="90" value="45">
+        </div>
+      </div>
+    </div>
+
+    <!-- SEKME: EFEKT -->
+    <div class="tab-panel" id="t-fx">
+      <div class="section-title">Işıma (Glow)</div>
+      <div class="toggle-row">
+        <span>Glow Efekti</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cGlowEnable"><span class="toggle-slider"></span></label>
+      </div>
+      <div id="glowOptions">
+        <div class="cg">
+          <label>Glow Rengi</label>
+          <div class="color-row">
+            <input type="color" id="cGlowColor" value="#6c63ff">
+            <input type="text" class="color-hex" id="cGlowColorHex" value="#6c63ff">
+          </div>
+        </div>
+        <div class="cg">
+          <label>Glow Yoğunluğu <span class="val" id="vGlowInt">60</span>%</label>
+          <input type="range" id="cGlowInt" min="0" max="100" value="60">
+        </div>
+      </div>
+
+      <div class="section-title">Animasyon</div>
+      <div class="cg">
+        <label>Dolgu Animasyonu</label>
+        <select id="cFillAnim">
+          <option value="none">Yok</option>
+          <option value="pulse">Nabız (Pulse)</option>
+          <option value="shimmer">Parıltı (Shimmer)</option>
+        </select>
+      </div>
+
+      <div id="shimmerOptions" style="display:none">
+        <div class="cg">
+          <label>Parıltı Hızı <span class="val" id="vShimmerSpeed">2.5</span> sn</label>
+          <input type="range" id="cShimmerSpeed" min="0.3" max="8" step="0.1" value="2.5">
+        </div>
+        <div class="cg">
+          <label>Parıltı Rengi</label>
+          <div class="color-row">
+            <input type="color" id="cShimmerColor" value="#ffffff">
+            <input type="text" class="color-hex" id="cShimmerColorHex" value="#ffffff">
+          </div>
+        </div>
+        <div class="cg">
+          <label>Parıltı Yoğunluğu <span class="val" id="vShimmerInt">25</span>%</label>
+          <input type="range" id="cShimmerInt" min="5" max="100" value="25">
+        </div>
+      </div>
+
+      <div id="pulseOptions" style="display:none">
+        <div class="cg">
+          <label>Nabız Hızı <span class="val" id="vPulseSpeed">2</span> sn</label>
+          <input type="range" id="cPulseSpeed" min="0.3" max="8" step="0.1" value="2">
+        </div>
+        <div class="cg">
+          <label>Nabız Yayılma <span class="val" id="vPulseSpread">20</span> px</label>
+          <input type="range" id="cPulseSpread" min="5" max="80" value="20">
+        </div>
+        <div class="cg">
+          <label>Nabız Rengi</label>
+          <div class="color-row">
+            <input type="color" id="cPulseColor" value="#ffffff">
+            <input type="text" class="color-hex" id="cPulseColorHex" value="#ffffff">
+          </div>
+        </div>
+        <div class="cg">
+          <label>Nabız Yoğunluğu <span class="val" id="vPulseInt">20</span>%</label>
+          <input type="range" id="cPulseInt" min="5" max="100" value="20">
+        </div>
+      </div>
+
+      <div class="section-title">Partikül Sistemi</div>
+      <div class="cg">
+        <label>Partikül Sayısı <span class="val" id="vPartCount">18</span></label>
+        <input type="range" id="cPartCount" min="0" max="120" value="18">
+      </div>
+      <div class="cg">
+        <label>Partikül Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cPartColor" value="#ffffff">
+          <input type="text" class="color-hex" id="cPartColorHex" value="#ffffff">
+        </div>
+      </div>
+      <div class="cg">
+        <label>Partikül Boyutu <span class="val" id="vPartSize">2.5</span> px</label>
+        <input type="range" id="cPartSize" min="0.5" max="8" step="0.5" value="2.5">
+      </div>
+      <div class="cg">
+        <label>Partikül Hızı <span class="val" id="vPartSpeed">17</span></label>
+        <input type="range" id="cPartSpeed" min="2" max="40" value="17">
+      </div>
+      <div class="cg">
+        <label>Partikül Şekli</label>
+        <select id="cPartShape">
+          <option value="circle">● Yuvarlak</option>
+          <option value="square">■ Kare</option>
+          <option value="star">★ Yıldız</option>
+          <option value="heart">♥ Kalp</option>
+        </select>
+      </div>
+      <div class="cg">
+        <label>Partikül Hareketi</label>
+        <select id="cPartMode">
+          <option value="float">Süzülme (Float)</option>
+          <option value="bounce">Sektirme (Bounce)</option>
+        </select>
+      </div>
+
+      <div class="section-title">Gölge ve Derinlik</div>
+      <div class="toggle-row">
+        <span>İçe Gölge</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cInnerShadow" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span>Yansıma Efekti</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cReflection" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="cg">
+        <label>Dış Gölge Derinliği <span class="val" id="vShadowD">32</span></label>
+        <input type="range" id="cShadowD" min="0" max="80" value="32">
+      </div>
+    </div>
+
+    <!-- SEKME: YAZI -->
+    <div class="tab-panel" id="t-text">
+      <div class="section-title">Orta Yazı</div>
+      <div class="toggle-row">
+        <span>Orta Yazıyı Göster</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cShowCenter" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="cg">
+        <label>Yazı İçeriği</label>
+        <input type="text" id="cCenterText" value="Mesaj Sayısı">
+      </div>
+      <div class="cg">
+        <label>Orta Yazı Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cCenterColor" value="#ffffff">
+          <input type="text" class="color-hex" id="cCenterColorHex" value="#ffffff">
+        </div>
+      </div>
+      <div class="cg">
+        <label>Yazı Boyutu <span class="val" id="vCenterSize">13</span> px</label>
+        <input type="range" id="cCenterSize" min="8" max="40" value="13">
+      </div>
+      <div class="cg">
+        <label>Harf Aralığı <span class="val" id="vCenterSpacing">1.5</span> px</label>
+        <input type="range" id="cCenterSpacing" min="0" max="10" step="0.5" value="1.5">
+      </div>
+      <div class="cg">
+        <label>Yazı Ağırlığı</label>
+        <select id="cCenterWeight">
+          <option value="400">Normal</option>
+          <option value="600">Semi Bold</option>
+          <option value="700" selected>Bold</option>
+          <option value="900">Black</option>
+        </select>
+      </div>
+      <div class="cg">
+        <label>Yazı Fontu</label>
+        <select id="cCenterFont">
+          <option value="'Outfit', sans-serif">Outfit</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+          <option value="'Arial Black', sans-serif">Arial Black</option>
+          <option value="'Georgia', serif">Georgia</option>
+          <option value="'Courier New', monospace">Courier New</option>
+        </select>
+      </div>
+
+      <div class="section-title">Sayılar (Mevcut / Hedef)</div>
+      <div class="toggle-row">
+        <span>Mevcut Sayıyı Göster</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cShowCurrent" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span>Hedef Sayıyı Göster</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cShowGoal" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span>Yüzde Rozeti (%) Göster</span>
+        <label class="toggle-wrap"><input type="checkbox" id="cShowPct"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="cg">
+        <label>Sayı Rengi</label>
+        <div class="color-row">
+          <input type="color" id="cTextColor" value="#ffffff">
+          <input type="text" class="color-hex" id="cTextColorHex" value="#ffffff">
+        </div>
+      </div>
+      <div class="cg">
+        <label>Sayı Boyutu <span class="val" id="vNumSize">18</span> px</label>
+        <input type="range" id="cNumSize" min="8" max="60" value="18">
+      </div>
+      <div class="cg">
+        <label>Prefix (öneki)</label>
+        <input type="text" id="cPrefix" placeholder="örn: $ veya boş">
+      </div>
+      <div class="cg">
+        <label>Suffix (soneki)</label>
+        <input type="text" id="cSuffix" placeholder="örn: puan veya boş">
+      </div>
+    </div>
+
+    <!-- SEKME: GELİŞMİŞ -->
+    <div class="tab-panel" id="t-adv">
+      <div class="section-title">Milestone İşaretçileri</div>
+      <p class="tip">Bara yüzde bazlı işaret ekleyin.</p>
+      <div class="milestone-list" id="milestoneList"></div>
+      <button class="btn btn-secondary" onclick="addMilestone()" style="margin-top:8px;">+ İşaretçi Ekle</button>
+
+      <div class="section-title">Backdrop Blur</div>
+      <div class="cg">
+        <label>Blur Miktarı <span class="val" id="vBlur">12</span> px</label>
+        <input type="range" id="cBlur" min="0" max="40" value="12">
+      </div>
+
+      <div class="section-title">Yazı Tipi (Global)</div>
+      <div class="cg">
+        <label>Global Font</label>
+        <select id="cGlobalFont">
+          <option value="'Outfit', sans-serif">Outfit</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+          <option value="'Arial Black', sans-serif">Arial Black</option>
+          <option value="'Georgia', serif">Georgia</option>
+        </select>
+      </div>
+
+      <div class="section-title">CSS Kodu</div>
+      <button class="btn btn-secondary" onclick="copyCSSCode()">📋 CSS'yi Kopyala</button>
+      <button class="btn btn-secondary" onclick="copyHTMLCode()">📋 HTML'yi Kopyala</button>
+
+      <div class="section-title">Sıfırla</div>
+      <button class="btn btn-danger" onclick="resetToDefault()">⚠ Varsayılana Dön</button>
+    </div>
+
+  </div><!-- end tab-panels -->
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item"><div class="status-dot"></div><span>Canlı</span></div>
+    <div class="status-item" id="statusSize">480×60</div>
+    <div class="status-item">%<span class="accent" id="statusPct">50</span></div>
+  </div>
+</div>
+
+<!-- ========== ORTA: ÖNİZLEME ========== -->
+<div class="preview-area" id="previewArea">
+  <!-- Arka plan swatchleri -->
+  <div class="bg-switcher">
+    <div class="bg-swatch active" style="background:#0c0c10;" data-bg="#0c0c10" title="Koyu"></div>
+    <div class="bg-swatch" style="background:#1a1030;" data-bg="#1a1030" title="Koyu Mor"></div>
+    <div class="bg-swatch" style="background:#0a1628;" data-bg="#0a1628" title="Koyu Mavi"></div>
+    <div class="bg-swatch" style="background:#ffffff;" data-bg="#ffffff" title="Beyaz"></div>
+    <div class="bg-swatch" style="background:linear-gradient(135deg,#667eea,#764ba2);background-size:20px;" data-bg="gradient1" title="Mor Degrade"></div>
+    <div class="bg-swatch" style="background:linear-gradient(135deg,#f093fb,#f5576c);background-size:20px;" data-bg="gradient2" title="Pembe"></div>
+    <div class="bg-swatch" style="background:linear-gradient(135deg,#4facfe,#00f2fe);" data-bg="gradient3" title="Mavi"></div>
+  </div>
+
+  <!-- Zoom kontrolleri -->
+  <div class="preview-controls">
+    <button class="preview-ctrl-btn" onclick="changeZoom(-0.1)" title="Küçült">−</button>
+    <button class="preview-ctrl-btn" onclick="changeZoom(0)" title="Sıfırla">⟳</button>
+    <button class="preview-ctrl-btn" onclick="changeZoom(0.1)" title="Büyüt">+</button>
+  </div>
+
+  <!-- Ana Widget -->
+  <div class="widget-canvas" id="widgetCanvas">
+    <div class="widget-wrapper" id="widgetWrapper">
+      <div class="progress-container" id="progressContainer">
+        <div class="glow-ring"></div>
+        <div class="reflection" id="reflectionElem"></div>
+        <div class="current-in-bar" id="currentElem">50</div>
+        <div class="center-label" id="centerLabelElem">Mesaj Sayısı</div>
+        <div class="percentage-badge" id="pctBadge" style="display:none">50%</div>
+        <div class="particles" id="particlesContainer"></div>
+        <div id="milestonesContainer"></div>
+        <div class="bar-track">
+          <div class="progress-fill striped" id="progressBar"></div>
+        </div>
+        <div class="goal-top" id="goalElem">100</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Slider -->
+  <div class="test-area">
+    <div class="cg">
+      <label>Test İlerlemesi &nbsp; <span class="val" id="vTestVal">50</span> / <span id="testGoalLabel">100</span></label>
+      <input type="range" id="testSlider" min="0" max="100" value="50">
+    </div>
+  </div>
+</div>
+
+<!-- ========== SAĞ PANEL ========== -->
+<div class="sidebar right">
+  <div class="sidebar-header">
+    <h1><span class="logo-dot" style="background:var(--accent2);box-shadow:0 0 12px var(--accent2)"></span>Tasarımlarım</h1>
+  </div>
+  <div class="right-panel-content">
+    <div class="preset-save-area">
+      <input type="text" id="presetName" placeholder="Tasarım adı...">
+      <button class="btn btn-primary" onclick="savePreset()">💾 Kaydet</button>
+    </div>
+    <div class="divider"></div>
+    <div class="preset-cards" id="presetCards">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">📦</div>
+        <div>Henüz kayıtlı tasarım yok.<br>Bir tasarım kaydedin!</div>
+      </div>
+    </div>
+
+    <div class="io-section">
+      <h2>İçe / Dışa Aktar</h2>
+      <textarea id="jsonIO" placeholder="JSON kodunu buraya yapıştırın..."></textarea>
+      <button class="btn btn-secondary" onclick="exportJSON()">📤 JSON'a Aktar</button>
+      <button class="btn btn-green" onclick="importJSON()">📥 JSON'dan İçe Al</button>
+      <div class="divider"></div>
+      <h2>Bot İçin Dışa Aktar</h2>
+      <button class="btn btn-primary" onclick="exportForBot()">🤖 Bot Dosyası Oluştur</button>
+      <p class="tip">Tek dosyada HTML + CSS + JS olarak dışa aktarır.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const DEFAULT_STATE = {
+  width: 480, height: 60, radius: 14,
+  borderW: 1, borderColor: '#ffffff', borderOp: 15,
+  bgColor: '#ffffff', bgOp: 8,
+  useGradient: false,
+  fillColor: '#6c63ff', fillColor1: '#6c63ff', fillColor2: '#a855f7', gradAngle: 90,
+  stripeEnable: true, stripeAnim: false, stripeColor: '#ffffff', stripeOp: 15, stripeAngle: 45,
+  glowEnable: false, glowColor: '#6c63ff', glowInt: 60,
+  fillAnim: 'none',
+  shimmerSpeed: 2.5, shimmerColor: '#ffffff', shimmerInt: 25,
+  pulseSpeed: 2, pulseSpread: 20, pulseColor: '#ffffff', pulseInt: 20,
+  partCount: 18, partColor: '#ffffff', partSize: 2.5, partSpeed: 17, partShape: 'circle', partMode: 'float',
+  innerShadow: true, reflection: true, shadowD: 32,
+  showCenter: true, centerText: 'Mesaj Sayısı', centerColor: '#ffffff', centerSize: 13, centerSpacing: 1.5, centerWeight: '700', centerFont: "'Outfit', sans-serif",
+  showCurrent: true, showGoal: true, showPct: false,
+  textColor: '#ffffff', numSize: 18,
+  prefix: '', suffix: '',
+  numFormat: 'locale',
+  blur: 12,
+  globalFont: "'Outfit', sans-serif",
+  currentVal: 50, goalVal: 100,
+  milestones: []
+};
+
+let state = deepClone(DEFAULT_STATE);
+let presets = JSON.parse(localStorage.getItem('barPresetsV2') || '{}');
+let zoomLevel = 1;
+let milestoneIdCounter = 0;
+
+function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+// ============================================================
+// ELEMENT REF
+// ============================================================
+const wrapper = document.getElementById('widgetWrapper');
+const container = document.getElementById('progressContainer');
+const fillBar = document.getElementById('progressBar');
+const currentElem = document.getElementById('currentElem');
+const goalElem = document.getElementById('goalElem');
+const centerLabelElem = document.getElementById('centerLabelElem');
+const pctBadge = document.getElementById('pctBadge');
+const particlesContainer = document.getElementById('particlesContainer');
+const milestonesContainer = document.getElementById('milestonesContainer');
+const testSlider = document.getElementById('testSlider');
+const reflectionElem = document.getElementById('reflectionElem');
+
+// ============================================================
+// SAYISAL FORMAT
+// ============================================================
+function fmtNum(n, format) {
+  n = Number(n);
+  switch(format) {
+    case 'locale': return n.toLocaleString('tr-TR');
+    case 'k': return n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'K' : n;
+    case 'm': return n >= 1e6 ? (n/1e6).toFixed(1).replace('.0','') + 'M' : n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'K' : n;
+    default: return n;
+  }
+}
+
+// ============================================================
+// HEX / RGB
+// ============================================================
+function hexToRgb(hex) {
+  hex = hex.replace('#','');
+  if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+  const n = parseInt(hex, 16);
+  return [(n>>16)&255, (n>>8)&255, n&255];
+}
+
+// ============================================================
+// ANA GÜNCELLEME
+// ============================================================
+function updateWidget() {
+  const s = state;
+
+  // CSS Variables
+  wrapper.style.setProperty('--width', s.width + 'px');
+  wrapper.style.setProperty('--height', s.height + 'px');
+  wrapper.style.setProperty('--radius', s.radius + 'px');
+
+  const bgRgb = hexToRgb(s.bgColor);
+  wrapper.style.setProperty('--bar-bg', `rgba(${bgRgb},${s.bgOp/100})`);
+
+  const borderRgb = hexToRgb(s.borderColor);
+  wrapper.style.setProperty('--border-color', `rgba(${borderRgb},${s.borderOp/100})`);
+  wrapper.style.setProperty('--border-width', s.borderW + 'px');
+
+  wrapper.style.setProperty('--bar-fill', s.fillColor);
+  wrapper.style.setProperty('--bar-fill2', s.fillColor2);
+
+  const stRgb = hexToRgb(s.stripeColor);
+  wrapper.style.setProperty('--stripe-color', `rgba(${stRgb},${s.stripeOp/100})`);
+
+  wrapper.style.setProperty('--center-text-color', s.centerColor);
+  wrapper.style.setProperty('--text-color', s.textColor);
+
+  const pRgb = hexToRgb(s.partColor);
+  wrapper.style.setProperty('--particle-color', pRgb.join(','));
+
+  const glRgb = hexToRgb(s.glowColor);
+  wrapper.style.setProperty('--glow-color', `rgba(${glRgb},${s.glowInt/100})`);
+
+  // Backdrop blur
+  container.style.backdropFilter = `blur(${s.blur}px)`;
+  container.style.webkitBackdropFilter = `blur(${s.blur}px)`;
+
+  // Box shadow
+  container.style.boxShadow = `0 ${s.shadowD/2}px ${s.shadowD}px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03)`;
+
+  // Glow
+  container.classList.toggle('glow-active', s.glowEnable);
+
+  // Gradient fill style
+  if(s.useGradient) {
+    fillBar.style.backgroundImage = `linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2})`;
+    fillBar.style.backgroundColor = '';
+  } else {
+    fillBar.style.backgroundImage = '';
+    fillBar.style.backgroundColor = s.fillColor;
+  }
+
+  // Stripe classes
+  fillBar.classList.toggle('striped', s.stripeEnable);
+  fillBar.classList.toggle('animated-stripe', s.stripeEnable && s.stripeAnim);
+  fillBar.classList.toggle('gradient-fill', s.useGradient);
+  if(s.stripeEnable) {
+    const angle = s.stripeAngle;
+    const stRgb2 = hexToRgb(s.stripeColor);
+    const stAlpha = s.stripeOp/100;
+    if(s.useGradient) {
+      fillBar.style.backgroundImage = `repeating-linear-gradient(${angle}deg, rgba(${stRgb2},${stAlpha}) 0px, rgba(${stRgb2},${stAlpha}) 10px, transparent 10px, transparent 20px), linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2})`;
+    } else {
+      fillBar.style.backgroundImage = `repeating-linear-gradient(${angle}deg, rgba(${stRgb2},${stAlpha}) 0px, rgba(${stRgb2},${stAlpha}) 10px, transparent 10px, transparent 20px)`;
+    }
+  }
+
+  // Fill Anim
+  fillBar.classList.remove('pulse-anim','shimmer-anim');
+  if(s.fillAnim === 'pulse') {
+    fillBar.classList.add('pulse-anim');
+    const pRgba = hexToRgb(s.pulseColor);
+    wrapper.style.setProperty('--pulse-speed', s.pulseSpeed + 's');
+    wrapper.style.setProperty('--pulse-spread', s.pulseSpread + 'px');
+    wrapper.style.setProperty('--pulse-color', `rgba(${pRgba},${s.pulseInt/100})`);
+  }
+  if(s.fillAnim === 'shimmer') {
+    fillBar.classList.add('shimmer-anim');
+    const sRgba = hexToRgb(s.shimmerColor);
+    wrapper.style.setProperty('--shimmer-speed', s.shimmerSpeed + 's');
+    wrapper.style.setProperty('--shimmer-color', `rgba(${sRgba},${s.shimmerInt/100})`);
+  }
+
+  // Inner shadow
+  container.classList.toggle('bar-inner-shadow', s.innerShadow);
+
+  // Reflection
+  reflectionElem.style.display = s.reflection ? 'block' : 'none';
+
+  // Global font
+  wrapper.style.fontFamily = s.globalFont;
+
+  // Center label
+  centerLabelElem.style.display = s.showCenter ? '' : 'none';
+  centerLabelElem.textContent = s.centerText;
+  centerLabelElem.style.color = s.centerColor;
+  centerLabelElem.style.fontSize = s.centerSize + 'px';
+  centerLabelElem.style.letterSpacing = s.centerSpacing + 'px';
+  centerLabelElem.style.fontWeight = s.centerWeight;
+  centerLabelElem.style.fontFamily = s.centerFont;
+
+  // Numbers
+  const prefix = s.prefix || '';
+  const suffix = s.suffix || '';
+  const fmtCurrent = prefix + fmtNum(s.currentVal, s.numFormat) + suffix;
+  const fmtGoal = prefix + fmtNum(s.goalVal, s.numFormat) + suffix;
+
+  currentElem.style.display = s.showCurrent ? '' : 'none';
+  currentElem.textContent = fmtCurrent;
+  currentElem.style.fontSize = s.numSize + 'px';
+  currentElem.style.color = s.textColor;
+
+  goalElem.style.display = (s.showGoal && !s.showPct) ? '' : 'none';
+  goalElem.textContent = fmtGoal;
+  goalElem.style.fontSize = s.numSize + 'px';
+  goalElem.style.color = s.textColor;
+
+  // Pct Badge
+  const pct = Math.min(Math.round((s.currentVal / s.goalVal) * 100), 100) || 0;
+  pctBadge.style.display = s.showPct ? '' : 'none';
+  pctBadge.textContent = pct + '%';
+
+  // Fill width
+  fillBar.style.width = pct + '%';
+
+  // Test slider sync
+  testSlider.max = s.goalVal;
+  testSlider.value = s.currentVal;
+  document.getElementById('vTestVal').textContent = fmtNum(s.currentVal, s.numFormat);
+  document.getElementById('testGoalLabel').textContent = fmtNum(s.goalVal, s.numFormat);
+
+  // Milestones
+  renderMilestones();
+
+  // Status bar
+  document.getElementById('statusSize').textContent = `${s.width}×${s.height}`;
+  document.getElementById('statusPct').textContent = pct;
+
+  // Save last state
+  localStorage.setItem('barLastStateV2', JSON.stringify(state));
+}
+
+// ============================================================
+// MİLESTONE RENDER
+// ============================================================
+function renderMilestones() {
+  milestonesContainer.innerHTML = '';
+  (state.milestones || []).forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'milestone-marker';
+    el.style.left = m.pct + '%';
+    el.style.background = m.color || 'rgba(255,255,255,0.4)';
+    el.setAttribute('data-label', m.pct + '%');
+    milestonesContainer.appendChild(el);
+  });
+}
+
+// ============================================================
+// MİLESTONE UI
+// ============================================================
+function addMilestone() {
+  const id = ++milestoneIdCounter;
+  state.milestones = state.milestones || [];
+  state.milestones.push({ id, pct: 50, color: '#ffffff' });
+  renderMilestoneList();
+  updateWidget();
+}
+
+function renderMilestoneList() {
+  const list = document.getElementById('milestoneList');
+  list.innerHTML = '';
+  (state.milestones || []).forEach((m, idx) => {
+    const row = document.createElement('div');
+    row.className = 'milestone-item';
+    row.innerHTML = `
+      <input type="number" value="${m.pct}" min="0" max="100" style="width:65px" onchange="state.milestones[${idx}].pct=+this.value;updateWidget()">
+      <span style="font-size:11px;color:var(--text-muted)">%</span>
+      <input type="color" value="${m.color}" style="width:32px;height:28px" onchange="state.milestones[${idx}].color=this.value;updateWidget()">
+      <button class="btn btn-danger" style="width:28px;height:28px;padding:0;margin:0" onclick="removeMilestone(${idx})">×</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function removeMilestone(idx) {
+  state.milestones.splice(idx, 1);
+  renderMilestoneList();
+  updateWidget();
+}
+
+// ============================================================
+// PARTİKÜL SİSTEMİ
+// ============================================================
+let bounceParticles = [];
+let bounceAnimFrame = null;
+
+function generateParticles() {
+  particlesContainer.innerHTML = '';
+  if(bounceAnimFrame) { cancelAnimationFrame(bounceAnimFrame); bounceAnimFrame = null; }
+  bounceParticles = [];
+  const n = parseInt(state.partCount);
+  const size = parseFloat(state.partSize);
+  const speed = parseFloat(state.partSpeed);
+  const shape = state.partShape;
+  const mode = state.partMode || 'float';
+
+  for(let i = 0; i < n; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    const s = (Math.random() * size * 0.8 + size * 0.5);
+    p.style.width = s + 'px';
+    p.style.height = s + 'px';
+
+    if(shape === 'square') p.style.borderRadius = '2px';
+    else if(shape === 'star') {
+      p.style.borderRadius = '0';
+      p.style.clipPath = 'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)';
+    } else if(shape === 'heart') {
+      p.style.borderRadius = '0';
+      p.style.clipPath = 'polygon(50% 100%,0% 35%,5% 15%,25% 0%,50% 15%,75% 0%,95% 15%,100% 35%)';
+    }
+
+    if(mode === 'bounce') {
+      const x = Math.random() * 90 + 5;
+      const y = Math.random() * 80 + 10;
+      p.style.left = x + '%';
+      p.style.top = y + '%';
+      p.style.animation = 'none';
+      bounceParticles.push({
+        el: p,
+        x: x, y: y,
+        vx: (Math.random() - 0.5) * (speed / 8),
+        vy: (Math.random() - 0.5) * (speed / 8),
+        size: s
+      });
+    } else {
+      p.style.top = (Math.random() * 100) + '%';
+      p.style.left = (Math.random() * 100) + '%';
+      const dur = Math.random() * speed + speed * 0.5;
+      const dir = Math.random() > 0.5 ? 'normal' : 'reverse';
+      const del = (Math.random() * -30);
+      const animName = Math.random() > 0.5 ? 'floatAnim' : 'floatAnim2';
+      p.style.animation = `${animName} ${dur}s linear ${del}s infinite ${dir}`;
+    }
+
+    particlesContainer.appendChild(p);
+  }
+
+  if(mode === 'bounce' && bounceParticles.length > 0) {
+    animateBounceParticles();
+  }
+}
+
+function animateBounceParticles() {
+  bounceParticles.forEach(bp => {
+    bp.x += bp.vx;
+    bp.y += bp.vy;
+    if(bp.x <= 0 || bp.x >= 98) { bp.vx *= -1; bp.x = Math.max(0, Math.min(98, bp.x)); }
+    if(bp.y <= 0 || bp.y >= 95) { bp.vy *= -1; bp.y = Math.max(0, Math.min(95, bp.y)); }
+    bp.el.style.left = bp.x + '%';
+    bp.el.style.top = bp.y + '%';
+  });
+  bounceAnimFrame = requestAnimationFrame(animateBounceParticles);
+}
+
+// ============================================================
+// INPUT BAĞLAMA SİSTEMİ
+// ============================================================
+function bind(id, prop, opts = {}) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const { label, isCheck, onChange, hexPair } = opts;
+
+  el.addEventListener('input', e => {
+    let val = isCheck ? e.target.checked : e.target.value;
+    if(!isCheck && !isNaN(val) && val !== '') val = parseFloat(val) || val;
+    state[prop] = val;
+    if(label) {
+      const lEl = document.getElementById(label);
+      if(lEl) lEl.textContent = typeof val === 'number' ? (Number.isInteger(val) ? val : parseFloat(val).toFixed(1)) : val;
+    }
+    if(hexPair) {
+      const hEl = document.getElementById(hexPair);
+      if(hEl) hEl.value = val;
+    }
+    if(onChange) onChange(val);
+    else updateWidget();
+  });
+
+  if(hexPair) {
+    const hEl = document.getElementById(hexPair);
+    if(hEl) {
+      hEl.addEventListener('input', e => {
+        let v = e.target.value;
+        if(v.startsWith('#') && (v.length === 4 || v.length === 7)) {
+          state[prop] = v;
+          el.value = v;
+          updateWidget();
+        }
+      });
+    }
+  }
+}
+
+// Bağlamalar
+bind('cWidth', 'width', {label:'vWidth'});
+bind('cHeight', 'height', {label:'vHeight'});
+bind('cRadius', 'radius', {label:'vRadius'});
+bind('cBorderW', 'borderW', {label:'vBorderW'});
+bind('cBorderColor', 'borderColor', {hexPair:'cBorderColorHex'});
+bind('cBorderOp', 'borderOp', {label:'vBorderOp'});
+bind('cBgColor', 'bgColor', {hexPair:'cBgColorHex'});
+bind('cBgOp', 'bgOp', {label:'vBgOp'});
+bind('cUseGradient', 'useGradient', {isCheck:true, onChange: v => {
+  document.getElementById('fillSolidGroup').style.display = v ? 'none' : '';
+  document.getElementById('fillGradientGroup').style.display = v ? '' : 'none';
+  updateWidget();
+}});
+bind('cFillColor', 'fillColor', {hexPair:'cFillColorHex'});
+bind('cFillColor1', 'fillColor1', {hexPair:'cFillColor1Hex'});
+bind('cFillColor2', 'fillColor2', {hexPair:'cFillColor2Hex'});
+bind('cGradAngle', 'gradAngle', {label:'vGradAngle'});
+bind('cStripeEnable', 'stripeEnable', {isCheck:true});
+bind('cStripeAnim', 'stripeAnim', {isCheck:true});
+bind('cStripeColor', 'stripeColor', {hexPair:'cStripeColorHex'});
+bind('cStripeOp', 'stripeOp', {label:'vStripeOp'});
+bind('cStripeAngle', 'stripeAngle', {label:'vStripeAngle'});
+bind('cGlowEnable', 'glowEnable', {isCheck:true});
+bind('cGlowColor', 'glowColor', {hexPair:'cGlowColorHex'});
+bind('cGlowInt', 'glowInt', {label:'vGlowInt'});
+bind('cFillAnim', 'fillAnim', {onChange: v => {
+  state.fillAnim = v;
+  document.getElementById('shimmerOptions').style.display = v === 'shimmer' ? '' : 'none';
+  document.getElementById('pulseOptions').style.display = v === 'pulse' ? '' : 'none';
+  updateWidget();
+}});
+bind('cShimmerSpeed', 'shimmerSpeed', {label:'vShimmerSpeed'});
+bind('cShimmerColor', 'shimmerColor', {hexPair:'cShimmerColorHex'});
+bind('cShimmerInt', 'shimmerInt', {label:'vShimmerInt'});
+bind('cPulseSpeed', 'pulseSpeed', {label:'vPulseSpeed'});
+bind('cPulseSpread', 'pulseSpread', {label:'vPulseSpread'});
+bind('cPulseColor', 'pulseColor', {hexPair:'cPulseColorHex'});
+bind('cPulseInt', 'pulseInt', {label:'vPulseInt'});
+bind('cPartColor', 'partColor', {hexPair:'cPartColorHex', onChange: v => { state.partColor = v; generateParticles(); }});
+bind('cPartSize', 'partSize', {label:'vPartSize', onChange: v => { state.partSize = v; generateParticles(); }});
+bind('cPartSpeed', 'partSpeed', {label:'vPartSpeed', onChange: v => { state.partSpeed = v; generateParticles(); }});
+bind('cPartShape', 'partShape', {onChange: v => { state.partShape = v; generateParticles(); }});
+bind('cPartMode', 'partMode', {onChange: v => { state.partMode = v; generateParticles(); }});
+bind('cInnerShadow', 'innerShadow', {isCheck:true});
+bind('cReflection', 'reflection', {isCheck:true});
+bind('cShadowD', 'shadowD', {label:'vShadowD'});
+bind('cShowCenter', 'showCenter', {isCheck:true});
+bind('cCenterText', 'centerText');
+bind('cCenterColor', 'centerColor', {hexPair:'cCenterColorHex'});
+bind('cCenterSize', 'centerSize', {label:'vCenterSize'});
+bind('cCenterSpacing', 'centerSpacing', {label:'vCenterSpacing'});
+bind('cCenterWeight', 'centerWeight');
+bind('cCenterFont', 'centerFont');
+bind('cShowCurrent', 'showCurrent', {isCheck:true});
+bind('cShowGoal', 'showGoal', {isCheck:true});
+bind('cShowPct', 'showPct', {isCheck:true});
+bind('cTextColor', 'textColor', {hexPair:'cTextColorHex'});
+bind('cNumSize', 'numSize', {label:'vNumSize'});
+bind('cPrefix', 'prefix');
+bind('cSuffix', 'suffix');
+bind('cNumFormat', 'numFormat');
+bind('cBlur', 'blur', {label:'vBlur'});
+bind('cGlobalFont', 'globalFont');
+bind('cCurrentVal', 'currentVal', {onChange: v => {state.currentVal=+v; document.getElementById('testSlider').value=v; updateWidget();}});
+bind('cGoalVal', 'goalVal');
+
+// Partikül sayısı (change + input)
+const pCountEl = document.getElementById('cPartCount');
+pCountEl.addEventListener('change', e => { state.partCount = +e.target.value; generateParticles(); });
+pCountEl.addEventListener('input', e => { document.getElementById('vPartCount').textContent = e.target.value; });
+
+// Test slider
+testSlider.addEventListener('input', e => {
+  state.currentVal = +e.target.value;
+  document.getElementById('vTestVal').textContent = fmtNum(state.currentVal, state.numFormat);
+  document.getElementById('cCurrentVal').value = state.currentVal;
+  updateWidget();
+});
+
+// ============================================================
+// SEKME SİSTEMİ
+// ============================================================
+document.getElementById('tab-nav').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+});
+
+// ============================================================
+// ŞEKİL PRESETLER
+// ============================================================
+function applyShape(type) {
+  document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if(type === 'square') { state.radius = 0; }
+  else if(type === 'rounded') { state.radius = Math.round(state.height * 0.25); }
+  else if(type === 'pill') { state.radius = Math.round(state.height / 2); }
+  else if(type === 'heart') { state.radius = Math.round(state.height * 0.35); }
+  document.getElementById('cRadius').value = state.radius;
+  document.getElementById('vRadius').textContent = state.radius;
+  updateWidget();
+}
+
+// ============================================================
+// ZOOM
+// ============================================================
+function changeZoom(delta) {
+  if(delta === 0) { zoomLevel = 1; }
+  else { zoomLevel = Math.max(0.3, Math.min(2, zoomLevel + delta)); }
+  document.getElementById('widgetCanvas').style.transform = `scale(${zoomLevel})`;
+}
+
+// ============================================================
+// ÖNIZLEME ARKA PLANI
+// ============================================================
+document.querySelectorAll('.bg-swatch').forEach(sw => {
+  sw.addEventListener('click', () => {
+    document.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+    const bg = sw.dataset.bg;
+    const pa = document.getElementById('previewArea');
+    if(bg === 'gradient1') pa.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
+    else if(bg === 'gradient2') pa.style.background = 'linear-gradient(135deg,#f093fb,#f5576c)';
+    else if(bg === 'gradient3') pa.style.background = 'linear-gradient(135deg,#4facfe,#00f2fe)';
+    else pa.style.background = bg;
+  });
+});
+
+// ============================================================
+// PRESET SİSTEMİ
+// ============================================================
+function savePreset() {
+  const nameInput = document.getElementById('presetName');
+  const name = nameInput.value.trim();
+  if(!name) { showToast('Lütfen bir isim girin!'); return; }
+  presets[name] = deepClone(state);
+  localStorage.setItem('barPresetsV2', JSON.stringify(presets));
+  nameInput.value = '';
+  renderPresets();
+  showToast(`"${name}" kaydedildi!`);
+}
+
+function loadPreset(name) {
+  state = deepClone(presets[name]);
+  updateUIFromState();
+  showToast(`"${name}" yüklendi!`);
+}
+
+function deletePreset(name, e) {
+  e.stopPropagation();
+  if(!confirm(`"${name}" silinsin mi?`)) return;
+  delete presets[name];
+  localStorage.setItem('barPresetsV2', JSON.stringify(presets));
+  renderPresets();
+  showToast('Silindi');
+}
+
+function renderPresets() {
+  const cards = document.getElementById('presetCards');
+  const empty = document.getElementById('emptyState');
+  const names = Object.keys(presets);
+  empty.style.display = names.length ? 'none' : '';
+
+  // Mevcut kartları kaldır (empty-state hariç)
+  [...cards.children].forEach(c => { if(!c.id) cards.removeChild(c); });
+
+  names.forEach(name => {
+    const ps = presets[name];
+    const card = document.createElement('div');
+    card.className = 'preset-card';
+    card.onclick = () => loadPreset(name);
+
+    // Küçük önizleme
+    const preview = document.createElement('div');
+    preview.className = 'preset-card-preview';
+    preview.style.background = (() => {
+      const rgb = hexToRgb(ps.bgColor || '#ffffff');
+      return `rgba(${rgb},${(ps.bgOp||8)/100})`;
+    })();
+    preview.style.backgroundColor = '#08080f';
+
+    // Mini bar
+    const miniTrack = document.createElement('div');
+    miniTrack.style.cssText = `position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;`;
+
+    const miniBg = document.createElement('div');
+    miniBg.style.cssText = `width:100%;height:60%;border-radius:${(ps.radius||12) * 0.4}px;overflow:hidden;position:relative;`;
+    const bgRgb = hexToRgb(ps.bgColor || '#fff');
+    miniBg.style.background = `rgba(${bgRgb},${(ps.bgOp||8)/100})`;
+    miniBg.style.border = `1px solid rgba(255,255,255,0.1)`;
+
+    const miniFill = document.createElement('div');
+    const pct = Math.min(Math.round(((ps.currentVal||50)/(ps.goalVal||100))*100),100);
+    miniFill.style.cssText = `height:100%;width:${pct}%;transition:none;`;
+    if(ps.useGradient) {
+      miniFill.style.background = `linear-gradient(${ps.gradAngle||90}deg,${ps.fillColor1||'#6c63ff'},${ps.fillColor2||'#a855f7'})`;
+    } else {
+      miniFill.style.background = ps.fillColor || '#6c63ff';
+    }
+
+    miniBg.appendChild(miniFill);
+    miniTrack.appendChild(miniBg);
+
+    // Mini label
+    const miniLabel = document.createElement('div');
+    miniLabel.style.cssText = `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:9px;color:rgba(255,255,255,0.7);font-weight:700;letter-spacing:1px;white-space:nowrap;font-family:'Outfit',sans-serif;text-transform:uppercase;`;
+    miniLabel.textContent = ps.centerText || '';
+
+    preview.appendChild(miniTrack);
+    preview.appendChild(miniLabel);
+
+    const info = document.createElement('div');
+    info.className = 'preset-card-info';
+    info.innerHTML = `
+      <span class="preset-card-name">${name}</span>
+      <div class="preset-card-actions">
+        <button class="preset-card-btn" title="Yükle" onclick="loadPreset('${name}');event.stopPropagation()">↩</button>
+        <button class="preset-card-btn del" title="Sil" onclick="deletePreset('${name}',event)">✕</button>
+      </div>
+    `;
+
+    card.appendChild(preview);
+    card.appendChild(info);
+    cards.appendChild(card);
+  });
+}
+
+// ============================================================
+// UI'DAN STATE'E SENKRONIZASYON
+// ============================================================
+function updateUIFromState() {
+  const s = state;
+  const setVal = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
+  const setCheck = (id, v) => { const el = document.getElementById(id); if(el) el.checked = v; };
+  const setLabel = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = (typeof v === 'number' && !Number.isInteger(v)) ? parseFloat(v).toFixed(1) : v; };
+
+  setVal('cWidth', s.width); setLabel('vWidth', s.width);
+  setVal('cHeight', s.height); setLabel('vHeight', s.height);
+  setVal('cRadius', s.radius); setLabel('vRadius', s.radius);
+  setVal('cBorderW', s.borderW); setLabel('vBorderW', s.borderW);
+  setVal('cBorderColor', s.borderColor); setVal('cBorderColorHex', s.borderColor);
+  setVal('cBorderOp', s.borderOp); setLabel('vBorderOp', s.borderOp);
+  setVal('cBgColor', s.bgColor); setVal('cBgColorHex', s.bgColor);
+  setVal('cBgOp', s.bgOp); setLabel('vBgOp', s.bgOp);
+  setCheck('cUseGradient', s.useGradient);
+  document.getElementById('fillSolidGroup').style.display = s.useGradient ? 'none' : '';
+  document.getElementById('fillGradientGroup').style.display = s.useGradient ? '' : 'none';
+  setVal('cFillColor', s.fillColor); setVal('cFillColorHex', s.fillColor);
+  setVal('cFillColor1', s.fillColor1); setVal('cFillColor1Hex', s.fillColor1);
+  setVal('cFillColor2', s.fillColor2); setVal('cFillColor2Hex', s.fillColor2);
+  setVal('cGradAngle', s.gradAngle); setLabel('vGradAngle', s.gradAngle);
+  setCheck('cStripeEnable', s.stripeEnable);
+  setCheck('cStripeAnim', s.stripeAnim);
+  setVal('cStripeColor', s.stripeColor); setVal('cStripeColorHex', s.stripeColor);
+  setVal('cStripeOp', s.stripeOp); setLabel('vStripeOp', s.stripeOp);
+  setVal('cStripeAngle', s.stripeAngle); setLabel('vStripeAngle', s.stripeAngle);
+  setCheck('cGlowEnable', s.glowEnable);
+  setVal('cGlowColor', s.glowColor); setVal('cGlowColorHex', s.glowColor);
+  setVal('cGlowInt', s.glowInt); setLabel('vGlowInt', s.glowInt);
+  setVal('cFillAnim', s.fillAnim);
+  document.getElementById('shimmerOptions').style.display = s.fillAnim === 'shimmer' ? '' : 'none';
+  document.getElementById('pulseOptions').style.display = s.fillAnim === 'pulse' ? '' : 'none';
+  setVal('cShimmerSpeed', s.shimmerSpeed); setLabel('vShimmerSpeed', s.shimmerSpeed);
+  setVal('cShimmerColor', s.shimmerColor); setVal('cShimmerColorHex', s.shimmerColor);
+  setVal('cShimmerInt', s.shimmerInt); setLabel('vShimmerInt', s.shimmerInt);
+  setVal('cPulseSpeed', s.pulseSpeed); setLabel('vPulseSpeed', s.pulseSpeed);
+  setVal('cPulseSpread', s.pulseSpread); setLabel('vPulseSpread', s.pulseSpread);
+  setVal('cPulseColor', s.pulseColor); setVal('cPulseColorHex', s.pulseColor);
+  setVal('cPulseInt', s.pulseInt); setLabel('vPulseInt', s.pulseInt);
+  setVal('cPartCount', s.partCount); setLabel('vPartCount', s.partCount);
+  setVal('cPartColor', s.partColor); setVal('cPartColorHex', s.partColor);
+  setVal('cPartSize', s.partSize); setLabel('vPartSize', s.partSize);
+  setVal('cPartSpeed', s.partSpeed); setLabel('vPartSpeed', s.partSpeed);
+  setVal('cPartShape', s.partShape);
+  setVal('cPartMode', s.partMode || 'float');
+  setCheck('cInnerShadow', s.innerShadow);
+  setCheck('cReflection', s.reflection);
+  setVal('cShadowD', s.shadowD); setLabel('vShadowD', s.shadowD);
+  setCheck('cShowCenter', s.showCenter);
+  setVal('cCenterText', s.centerText);
+  setVal('cCenterColor', s.centerColor); setVal('cCenterColorHex', s.centerColor);
+  setVal('cCenterSize', s.centerSize); setLabel('vCenterSize', s.centerSize);
+  setVal('cCenterSpacing', s.centerSpacing); setLabel('vCenterSpacing', s.centerSpacing);
+  setVal('cCenterWeight', s.centerWeight);
+  setVal('cCenterFont', s.centerFont);
+  setCheck('cShowCurrent', s.showCurrent);
+  setCheck('cShowGoal', s.showGoal);
+  setCheck('cShowPct', s.showPct);
+  setVal('cTextColor', s.textColor); setVal('cTextColorHex', s.textColor);
+  setVal('cNumSize', s.numSize); setLabel('vNumSize', s.numSize);
+  setVal('cPrefix', s.prefix || '');
+  setVal('cSuffix', s.suffix || '');
+  setVal('cNumFormat', s.numFormat);
+  setVal('cBlur', s.blur); setLabel('vBlur', s.blur);
+  setVal('cGlobalFont', s.globalFont);
+  setVal('cCurrentVal', s.currentVal);
+  setVal('cGoalVal', s.goalVal);
+
+  renderMilestoneList();
+  generateParticles();
+  updateWidget();
+}
+
+// ============================================================
+// JSON İÇE/DIŞA AKTARMA
+// ============================================================
+function exportJSON() {
+  const json = JSON.stringify({ version: '2.0', info: 'Bar Editörü Pro', settings: state }, null, 2);
+  document.getElementById('jsonIO').value = json;
+  navigator.clipboard.writeText(json).catch(()=>{});
+  showToast('JSON panoya kopyalandı!');
+}
+
+function importJSON() {
+  try {
+    const parsed = JSON.parse(document.getElementById('jsonIO').value);
+    if(parsed.settings) {
+      state = Object.assign(deepClone(DEFAULT_STATE), parsed.settings);
+      updateUIFromState();
+      showToast('İçe aktarıldı!');
+    } else { showToast('Geçersiz format!'); }
+  } catch(e) { showToast('JSON hatası!'); }
+}
+
+// ============================================================
+// CSS / HTML KOPYALAMA
+// ============================================================
+function copyCSSCode() {
+  const s = state;
+  const bgRgb = hexToRgb(s.bgColor);
+  const css = `.progress-bar {
+  width: ${s.width}px;
+  height: ${s.height}px;
+  border-radius: ${s.radius}px;
+  background: rgba(${bgRgb}, ${s.bgOp/100});
+  backdrop-filter: blur(${s.blur}px);
+  border: ${s.borderW}px solid rgba(${hexToRgb(s.borderColor)}, ${s.borderOp/100});
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: ${s.useGradient ? `linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2})` : s.fillColor};
+  border-radius: inherit;
+}`;
+  navigator.clipboard.writeText(css).catch(()=>{});
+  showToast('CSS kopyalandı!');
+}
+
+function copyHTMLCode() {
+  const html = document.getElementById('widgetWrapper').outerHTML;
+  navigator.clipboard.writeText(html).catch(()=>{});
+  showToast('HTML kopyalandı!');
+}
+
+// ============================================================
+// BOT İÇİN DIŞA AKTARMA
+// ============================================================
+function exportForBot() {
+  const s = state;
+  const bgRgb = hexToRgb(s.bgColor);
+  const borderRgb = hexToRgb(s.borderColor);
+  const pRgb = hexToRgb(s.partColor);
+  const stRgb = hexToRgb(s.stripeColor);
+  const pct = Math.min(Math.round((s.currentVal / s.goalVal) * 100), 100) || 0;
+  const prefix = s.prefix || '';
+  const suffix = s.suffix || '';
+
+  // Partiküller HTML
+  let particlesHTML = '';
+  const partCount = parseInt(s.partCount);
+  for(let i = 0; i < partCount; i++) {
+    particlesHTML += `<div class="particle p${i+1}"></div>`;
+  }
+
+  // Partikül CSS
+  let particleCSS = '';
+  const partSize = parseFloat(s.partSize);
+  const partSpeed = parseFloat(s.partSpeed);
+  for(let i = 0; i < partCount; i++) {
+    const sz = (Math.random() * partSize * 0.8 + partSize * 0.5).toFixed(1);
+    const top = (Math.random() * 100).toFixed(1);
+    const left = (Math.random() * 100).toFixed(1);
+    const dur = (Math.random() * partSpeed + partSpeed * 0.5).toFixed(1);
+    const dir = Math.random() > 0.5 ? 'normal' : 'reverse';
+    const del = (Math.random() * -30).toFixed(1);
+    const animName = Math.random() > 0.5 ? 'float' : 'float2';
+    let shapeCSS = '';
+    if(s.partShape === 'square') shapeCSS = 'border-radius: 2px;';
+    else if(s.partShape === 'star') shapeCSS = 'border-radius: 0; clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);';
+    else if(s.partShape === 'heart') shapeCSS = 'border-radius: 0; clip-path: polygon(50% 100%,0% 35%,5% 15%,25% 0%,50% 15%,75% 0%,95% 15%,100% 35%);';
+    particleCSS += `.p${i+1} { width: ${sz}px; height: ${sz}px; top: ${top}%; left: ${left}%; animation: ${animName} ${dur}s infinite linear ${del}s ${dir}; ${shapeCSS} }\n`;
+  }
+
+  // Fill background
+  let fillBg = '';
+  if(s.useGradient && s.stripeEnable) {
+    fillBg = `background-image: repeating-linear-gradient(${s.stripeAngle}deg, rgba(${stRgb},${s.stripeOp/100}) 0px, rgba(${stRgb},${s.stripeOp/100}) 10px, transparent 10px, transparent 20px), linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2});`;
+  } else if(s.useGradient) {
+    fillBg = `background: linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2});`;
+  } else if(s.stripeEnable) {
+    fillBg = `background-color: ${s.fillColor}; background-image: repeating-linear-gradient(${s.stripeAngle}deg, rgba(${stRgb},${s.stripeOp/100}) 0px, rgba(${stRgb},${s.stripeOp/100}) 10px, transparent 10px, transparent 20px);`;
+  } else {
+    fillBg = `background-color: ${s.fillColor};`;
+  }
+
+  // Animations
+  let animCSS = '';
+  let animClass = '';
+  if(s.fillAnim === 'pulse') {
+    const pulseRgb = hexToRgb(s.pulseColor);
+    animCSS = `@keyframes pulseGlow { 0%,100% { box-shadow: inset 0 0 0 0 transparent; } 50% { box-shadow: inset 0 0 ${s.pulseSpread}px rgba(${pulseRgb},${s.pulseInt/100}); } }\n`;
+    animClass = ` animation: pulseGlow ${s.pulseSpeed}s ease-in-out infinite;`;
+  }
+  if(s.fillAnim === 'shimmer') {
+    const shimRgb = hexToRgb(s.shimmerColor);
+    animCSS = `@keyframes shimmerAnim { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }\n`;
+    animClass = '';
+  }
+
+  let stripeAnimCSS = '';
+  if(s.stripeEnable && s.stripeAnim) {
+    stripeAnimCSS = `@keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }\n`;
+  }
+
+  // Shimmer after pseudo
+  let shimmerAfter = '';
+  if(s.fillAnim === 'shimmer') {
+    const shimRgb = hexToRgb(s.shimmerColor);
+    shimmerAfter = `.progress-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(${shimRgb},${s.shimmerInt/100}) 50%, transparent 100%); background-size: 200% 100%; animation: shimmerAnim ${s.shimmerSpeed}s ease-in-out infinite; }\n`;
+  }
+
+  // Milestone markers
+  let milestoneHTML = '';
+  (s.milestones || []).forEach(m => {
+    milestoneHTML += `<div class="milestone-marker" style="left:${m.pct}%;background:${m.color||'rgba(255,255,255,0.4)'}" data-label="${m.pct}%"></div>\n`;
+  });
+
+  // Build HTML
+  const botHTML = `<div class="progress-container">
+    <div class="current-in-bar" id="current-messages">${prefix}0${suffix}</div>
+    <div class="center-label">${s.showCenter ? s.centerText : ''}</div>
+    ${s.showPct ? '<div class="percentage-badge" id="pct-badge">0%</div>' : ''}
+    <div class="particles">
+        ${particlesHTML}
+    </div>
+    ${milestoneHTML}
+    <div class="bar-track">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+    <div class="goal-top" id="goal-messages">${prefix}0${suffix}</div>
+</div>`;
+
+  // Build JS
+  const botJS = `const MESSAGE_GOAL = ${s.goalVal};
+const currentMsgElem = document.getElementById('current-messages');
+const goalMsgElem = document.getElementById('goal-messages');
+const progressBar = document.getElementById('progress-bar');
+${s.showPct ? "const pctBadge = document.getElementById('pct-badge');" : ''}
+let messageCount = 0;
+goalMsgElem.textContent = '${prefix}' + MESSAGE_GOAL.toLocaleString() + '${suffix}';
+currentMsgElem.textContent = '${prefix}' + messageCount.toLocaleString() + '${suffix}';
+function updateWidget() {
+    currentMsgElem.textContent = '${prefix}' + messageCount.toLocaleString() + '${suffix}';
+    const percent = Math.min((messageCount / MESSAGE_GOAL) * 100, 100);
+    progressBar.style.width = percent + '%';
+    ${s.showPct ? "pctBadge.textContent = Math.round(percent) + '%';" : ''}
+}
+document.addEventListener('widgetEvent', function (event) {
+    if (event.detail.event_name === 'chatMessageEvent') {
+        messageCount++;
+        updateWidget();
+    }
+});`;
+
+  // Build CSS
+  const botCSS = `:root {
+    --bar-bg: rgba(${bgRgb}, ${s.bgOp/100});
+    --bar-fill: ${s.fillColor};
+    --text-color: ${s.textColor};
+    --width: ${s.width}px;
+    --height: ${s.height}px;
+    --radius: ${s.radius}px;
+}
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: transparent;
+    font-family: ${s.globalFont};
+}
+.progress-container {
+    width: var(--width);
+    height: var(--height);
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: var(--bar-bg);
+    backdrop-filter: blur(${s.blur}px);
+    -webkit-backdrop-filter: blur(${s.blur}px);
+    border-radius: var(--radius);
+    border: ${s.borderW}px solid rgba(${borderRgb}, ${s.borderOp/100});
+    box-shadow: 0 ${s.shadowD/2}px ${s.shadowD}px rgba(0,0,0,0.45);
+    overflow: hidden;
+}
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+.particle {
+    position: absolute;
+    background: rgb(${pRgb.join(',')});
+    border-radius: 50%;
+    opacity: 0.8;
+    filter: blur(0.5px);
+}
+${particleCSS}
+@keyframes float {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+    50% { transform: translate(15px, -12px) scale(1.3); opacity: 0.9; }
+    100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+}
+@keyframes float2 {
+    0% { transform: translate(0,0) rotate(0deg); opacity: 0.15; }
+    33% { transform: translate(-12px,8px) rotate(120deg); opacity: 0.8; }
+    66% { transform: translate(10px,-5px) rotate(240deg); opacity: 0.4; }
+    100% { transform: translate(0,0) rotate(360deg); opacity: 0.15; }
+}
+${stripeAnimCSS}${animCSS}${shimmerAfter}
+.bar-track {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    ${fillBg}
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+    ${s.stripeEnable && s.stripeAnim ? 'animation: moveStripes 0.8s linear infinite;' : ''}
+    ${animClass}
+}
+.center-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: ${s.centerColor};
+    font-size: ${s.centerSize}px;
+    letter-spacing: ${s.centerSpacing}px;
+    font-weight: ${s.centerWeight};
+    opacity: 0.9;
+    z-index: 10;
+    pointer-events: none;
+    text-transform: uppercase;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    font-family: ${s.centerFont};
+    ${s.showCenter ? '' : 'display: none;'}
+}
+.current-in-bar, .goal-top {
+    position: absolute;
+    color: var(--text-color);
+    font-size: ${s.numSize}px;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    z-index: 10;
+}
+.current-in-bar { left: 14px; ${s.showCurrent ? '' : 'display: none;'} }
+.goal-top { right: 14px; ${s.showGoal && !s.showPct ? '' : 'display: none;'} }
+${s.showPct ? `.percentage-badge {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 800;
+    z-index: 10;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+}` : ''}
+.milestone-marker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    z-index: 8;
+    pointer-events: none;
+}`;
+
+  const botFile = botHTML + '\n' + botJS + '\n' + botCSS;
+
+  // Dosyayı indir
+  const blob = new Blob([botFile], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'bot-widget.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Bot dosyası indirildi!');
+}
+
+// ============================================================
+// SIFIRLA
+// ============================================================
+function resetToDefault() {
+  if(!confirm('Tüm ayarlar sıfırlansın mı?')) return;
+  state = deepClone(DEFAULT_STATE);
+  updateUIFromState();
+  showToast('Varsayılana dönüldü');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// BAŞLANGIÇ
+// ============================================================
+window.onload = () => {
+  const saved = localStorage.getItem('barLastStateV2');
+  if(saved) {
+    try { state = Object.assign(deepClone(DEFAULT_STATE), JSON.parse(saved)); } catch(e){}
+  }
+  updateUIFromState();
+  renderPresets();
+};
+</script>
+</body>
+</html>
