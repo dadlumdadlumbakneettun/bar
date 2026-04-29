@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bar Editörü</title>
+<title>Bar Editörü Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -490,7 +490,20 @@ textarea:focus { border-color: var(--accent3); }
     transparent 10px, transparent 20px
   );
 }
-
+.progress-fill.stripe-anim-active::before {
+  content: '';
+  position: absolute;
+  top: -100%; left: -100%;
+  width: 300%; height: 300%;
+  background-image: var(--stripe-anim-image);
+  animation: moveStripePseudo var(--stripe-anim-dur, 0.7s) linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+@keyframes moveStripePseudo {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(var(--stripe-anim-tx, 14px), var(--stripe-anim-ty, -14px)); }
+}
 
 
 @keyframes pulseGlow {
@@ -1285,9 +1298,10 @@ function updateWidget() {
     fillBar.style.backgroundColor = s.fillColor;
   }
 
-  fillBar.classList.toggle('striped', s.stripeEnable);
+  fillBar.classList.toggle('striped', s.stripeEnable && !s.stripeAnim);
+fillBar.classList.toggle('stripe-anim-active', s.stripeEnable && s.stripeAnim);
   fillBar.classList.toggle('gradient-fill', s.useGradient);
-  if(s.stripeEnable) {
+ if(s.stripeEnable && !s.stripeAnim) {
     const angle = s.stripeAngle;
     const stRgb2 = hexToRgb(s.stripeColor);
     const stAlpha = s.stripeOp/100;
@@ -1296,26 +1310,29 @@ function updateWidget() {
     } else {
       fillBar.style.backgroundImage = `repeating-linear-gradient(${angle}deg, rgba(${stRgb2},${stAlpha}) 0px, rgba(${stRgb2},${stAlpha}) 10px, transparent 10px, transparent 20px)`;
     }
+  } else if(s.stripeEnable && s.stripeAnim) {
+    
+    if(s.useGradient) {
+      fillBar.style.backgroundImage = `linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2})`;
+    } else {
+      fillBar.style.backgroundImage = 'none';
+    }
   }
 
   let animations = [];
 
-  if(s.stripeEnable && s.stripeAnim) {
+if(s.stripeEnable && s.stripeAnim) {
     const angleRad = s.stripeAngle * Math.PI / 180;
-    const sinA = Math.sin(angleRad);
-    const cosA = Math.cos(angleRad);
-    const dx = (20 * sinA).toFixed(2);
-    const dy = (-20 * cosA).toFixed(2);
-    let dynStyle = document.getElementById('dynStripeAnim');
-    if(!dynStyle) { dynStyle = document.createElement('style'); dynStyle.id = 'dynStripeAnim'; document.head.appendChild(dynStyle); }
-    if(s.useGradient) {
-      dynStyle.textContent = `@keyframes moveStripes { 0% { background-position: 0 0, 0 0; } 100% { background-position: ${dx}px ${dy}px, 0 0; } }`;
-    } else {
-      dynStyle.textContent = `@keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: ${dx}px ${dy}px; } }`;
-    }
-    animations.push('moveStripes 0.8s linear infinite');
+    const tx = (20 * Math.sin(angleRad)).toFixed(2);
+    const ty = (-20 * Math.cos(angleRad)).toFixed(2);
+    const stRgb2 = hexToRgb(s.stripeColor);
+    const stAlpha = s.stripeOp / 100;
+    wrapper.style.setProperty('--stripe-anim-image',
+      `repeating-linear-gradient(${s.stripeAngle}deg, rgba(${stRgb2},${stAlpha}) 0px, rgba(${stRgb2},${stAlpha}) 10px, transparent 10px, transparent 20px)`
+    );
+    wrapper.style.setProperty('--stripe-anim-tx', tx + 'px');
+    wrapper.style.setProperty('--stripe-anim-ty', ty + 'px');
   }
-
   fillBar.classList.remove('pulse-anim','shimmer-anim');
   if(s.fillAnim === 'pulse') {
     fillBar.classList.add('pulse-anim');
