@@ -6,7 +6,6 @@
 <title>Bar Editörü Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ========== ROOT ========== */
 :root {
   --app-bg: #0c0c10;
   --panel-bg: #13131a;
@@ -40,13 +39,11 @@ body {
   font-size: 14px;
 }
 
-/* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* ========== SIDEBAR ========== */
 .sidebar {
   width: var(--panel-w);
   background: var(--panel-bg);
@@ -83,7 +80,6 @@ body {
   flex-shrink: 0;
 }
 
-/* ========== TAB NAVİGASYONU (Sol) ========== */
 .tab-nav {
   display: flex;
   gap: 2px;
@@ -109,12 +105,10 @@ body {
 .tab-btn:hover { border-color: var(--accent); color: var(--text); }
 .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 14px rgba(108,99,255,0.4); }
 
-/* ========== TAB PANELLERİ ========== */
 .tab-panels { flex: 1; overflow-y: auto; padding: 14px 16px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
-/* ========== SECTION BAŞLIKLARI ========== */
 .section-title {
   font-size: 10px;
   font-weight: 700;
@@ -135,7 +129,6 @@ body {
 }
 .section-title:first-child { margin-top: 4px; }
 
-/* ========== KONTROL GRUPLARI ========== */
 .cg { margin-bottom: 10px; }
 .cg label {
   display: flex;
@@ -155,7 +148,6 @@ body {
   border-radius: 4px;
 }
 
-/* Range Input */
 input[type=range] {
   width: 100%; height: 4px; cursor: pointer;
   -webkit-appearance: none; appearance: none;
@@ -175,7 +167,6 @@ input[type=range]::-webkit-slider-thumb {
 }
 input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-/* Color Input */
 .color-row {
   display: flex;
   gap: 8px;
@@ -204,7 +195,6 @@ input[type=color] {
 }
 .color-hex:focus { border-color: var(--accent); }
 
-/* Text / Number Input */
 input[type=text], input[type=number] {
   width: 100%;
   background: var(--input-bg);
@@ -219,7 +209,6 @@ input[type=text], input[type=number] {
 }
 input[type=text]:focus, input[type=number]:focus { border-color: var(--accent); }
 
-/* Select */
 select {
   width: 100%;
   background: var(--input-bg);
@@ -235,7 +224,6 @@ select {
 }
 select:focus { border-color: var(--accent); }
 
-/* Toggle Checkbox */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -265,7 +253,6 @@ select:focus { border-color: var(--accent); }
 .toggle-wrap input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
 .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(18px); background: #fff; }
 
-/* Gradient Row */
 .gradient-row {
   display: flex;
   gap: 8px;
@@ -273,7 +260,6 @@ select:focus { border-color: var(--accent); }
 }
 .gradient-row input[type=color] { flex: 1; width: auto; }
 
-/* Buttons */
 .btn {
   display: flex; align-items: center; justify-content: center;
   gap: 6px;
@@ -297,7 +283,6 @@ select:focus { border-color: var(--accent); }
 .btn-green { background: rgba(67,233,123,0.15); color: var(--accent3); border: 1px solid rgba(67,233,123,0.3); }
 .btn-green:hover { background: rgba(67,233,123,0.25); }
 
-/* Textarea */
 textarea {
   width: 100%;
   background: #080810;
@@ -314,7 +299,6 @@ textarea {
 }
 textarea:focus { border-color: var(--accent3); }
 
-/* Shape Presets */
 .shape-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -335,7 +319,6 @@ textarea:focus { border-color: var(--accent3); }
 }
 .shape-btn:hover, .shape-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(108,99,255,0.1); }
 
-/* Milestone Tags */
 .milestone-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
 .milestone-item {
   display: flex; gap: 6px; align-items: center;
@@ -344,7 +327,6 @@ textarea:focus { border-color: var(--accent3); }
 .milestone-item input[type=color] { width: 32px; height: 28px; }
 .milestone-item .btn-danger { width: 28px; height: 28px; padding: 0; margin: 0; border-radius: var(--radius-sm); font-size: 14px; }
 
-/* ========== ÖNIZLEME ALANI ========== */
 .preview-area {
   flex: 1;
   display: flex;
@@ -356,7 +338,6 @@ textarea:focus { border-color: var(--accent3); }
   overflow: hidden;
 }
 
-/* Grid Arka Plan */
 .preview-area::before {
   content: '';
   position: absolute;
@@ -368,7 +349,6 @@ textarea:focus { border-color: var(--accent3); }
   pointer-events: none;
 }
 
-/* Preview BG Seçici */
 .bg-switcher {
   position: absolute;
   top: 16px;
@@ -392,7 +372,6 @@ textarea:focus { border-color: var(--accent3); }
 }
 .bg-swatch:hover, .bg-swatch.active { border-color: var(--accent); transform: scale(1.15); }
 
-/* Zoom butonları */
 .preview-controls {
   position: absolute;
   top: 16px;
@@ -415,13 +394,11 @@ textarea:focus { border-color: var(--accent3); }
 }
 .preview-ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Widget Wrapper */
 .widget-canvas {
   transform-origin: center center;
   transition: transform 0.2s ease;
 }
 
-/* ========== WIDGET STİLLERİ ========== */
 .widget-wrapper {
   --width: 480px; --height: 60px; --radius: 14px;
   --bar-bg: rgba(255,255,255,0.08);
@@ -452,7 +429,6 @@ textarea:focus { border-color: var(--accent3); }
   box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03);
 }
 
-/* Glow */
 .glow-ring {
   position: absolute; inset: 0;
   border-radius: inherit;
@@ -464,7 +440,6 @@ textarea:focus { border-color: var(--accent3); }
 }
 .glow-active .glow-ring { opacity: 1; }
 
-/* Partiküller */
 .particles {
   position: absolute; width: 100%; height: 100%; top: 0; left: 0;
   z-index: 5; pointer-events: none;
@@ -484,7 +459,6 @@ textarea:focus { border-color: var(--accent3); }
   66% { transform: translate(10px,-5px) rotate(240deg); opacity: 0.4; }
   100% { transform: translate(0,0) rotate(360deg); opacity: 0.15; }
 }
-/* Bouncing particle - JS ile yönetilir, CSS animasyonu yok */
 
 .bar-track { width: 100%; height: 100%; position: relative; z-index: 1; }
 
@@ -517,20 +491,14 @@ textarea:focus { border-color: var(--accent3); }
   );
 }
 
-.progress-fill.animated-stripe { animation: moveStripes 0.8s linear infinite; }
-@keyframes moveStripes {
-  0% { background-position: 0 0; }
-  100% { background-position: 28px 0; }
-}
 
-/* Pulse animasyonu */
+
 @keyframes pulseGlow {
   0%,100% { box-shadow: inset 0 0 0 0 transparent; }
   50% { box-shadow: inset 0 0 var(--pulse-spread, 20px) var(--pulse-color, rgba(255,255,255,0.2)); }
 }
 .progress-fill.pulse-anim { animation: pulseGlow var(--pulse-speed, 2s) ease-in-out infinite; }
 
-/* Shimmer */
 @keyframes shimmerAnim {
   0% { background-position: 200% center; }
   100% { background-position: -200% center; }
@@ -543,7 +511,6 @@ textarea:focus { border-color: var(--accent3); }
   animation: shimmerAnim var(--shimmer-speed, 2.5s) ease-in-out infinite;
 }
 
-/* İçe gölge */
 .bar-inner-shadow::after {
   content: '';
   position: absolute; inset: 0;
@@ -553,7 +520,6 @@ textarea:focus { border-color: var(--accent3); }
   z-index: 15;
 }
 
-/* Milestone işaretçileri */
 .milestone-marker {
   position: absolute;
   top: 0; height: 100%;
@@ -574,7 +540,6 @@ textarea:focus { border-color: var(--accent3); }
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Yansıma */
 .reflection {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 50%;
@@ -584,7 +549,6 @@ textarea:focus { border-color: var(--accent3); }
   z-index: 12;
 }
 
-/* Yazılar */
 .center-label {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
   color: var(--center-text-color); font-size: 13px; letter-spacing: 1.5px;
@@ -611,7 +575,6 @@ textarea:focus { border-color: var(--accent3); }
   text-shadow: 0 1px 6px rgba(0,0,0,0.6);
 }
 
-/* Test slider alanı */
 .test-area {
   position: absolute;
   bottom: 20px;
@@ -627,7 +590,6 @@ textarea:focus { border-color: var(--accent3); }
 }
 .test-area .cg { margin-bottom: 0; }
 
-/* ========== SAĞ PANEL ========== */
 .right-panel-content {
   flex: 1;
   overflow-y: auto;
@@ -637,7 +599,6 @@ textarea:focus { border-color: var(--accent3); }
 .preset-save-area { margin-bottom: 18px; }
 .preset-save-area input[type=text] { margin-bottom: 8px; }
 
-/* Önizleme kartları */
 .preset-cards {
   display: flex;
   flex-direction: column;
@@ -692,10 +653,8 @@ textarea:focus { border-color: var(--accent3); }
 .preset-card-btn:hover { border-color: var(--accent); color: var(--accent); }
 .preset-card-btn.del:hover { border-color: var(--accent2); color: var(--accent2); }
 
-/* Küçük bar önizleme (canvas içi) */
 .mini-bar { position: absolute; height: 100%; left: 0; top: 0; }
 
-/* Import/Export */
 .io-section { margin-top: 20px; }
 .io-section h2 {
   font-size: 10px;
@@ -706,7 +665,6 @@ textarea:focus { border-color: var(--accent3); }
   font-weight: 700;
 }
 
-/* Status bar */
 .status-bar {
   height: 28px;
   background: var(--panel-bg);
@@ -724,7 +682,6 @@ textarea:focus { border-color: var(--accent3); }
 .status-item { display: flex; align-items: center; gap: 5px; }
 .status-item span.accent { color: var(--accent); }
 
-/* Kopya bileşimi için export popup */
 .toast {
   position: fixed;
   bottom: 40px;
@@ -744,7 +701,6 @@ textarea:focus { border-color: var(--accent3); }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Empty preset state */
 .empty-state {
   text-align: center;
   padding: 30px 20px;
@@ -753,10 +709,8 @@ textarea:focus { border-color: var(--accent3); }
 }
 .empty-state .icon { font-size: 32px; margin-bottom: 10px; }
 
-/* Divider */
 .divider { height: 1px; background: var(--border); margin: 14px 0; }
 
-/* Tooltip */
 .tip {
   font-size: 11px;
   color: var(--text-muted);
@@ -767,7 +721,6 @@ textarea:focus { border-color: var(--accent3); }
 </head>
 <body>
 
-<!-- ========== SOL PANEL ========== -->
 <div class="sidebar">
   <div class="sidebar-header">
     <h1><span class="logo-dot"></span>Bar Editörü Pro</h1>
@@ -782,7 +735,6 @@ textarea:focus { border-color: var(--accent3); }
 
   <div class="tab-panels">
 
-    <!-- SEKME: ŞEKIL -->
     <div class="tab-panel active" id="t-shape">
       <div class="section-title">Boyutlar</div>
       <div class="cg">
@@ -843,7 +795,6 @@ textarea:focus { border-color: var(--accent3); }
       </div>
     </div>
 
-    <!-- SEKME: RENK -->
     <div class="tab-panel" id="t-color">
       <div class="section-title">Arka Plan</div>
       <div class="cg">
@@ -913,7 +864,6 @@ textarea:focus { border-color: var(--accent3); }
       </div>
     </div>
 
-    <!-- SEKME: EFEKT -->
     <div class="tab-panel" id="t-fx">
       <div class="section-title">Işıma (Glow)</div>
       <div class="toggle-row">
@@ -1036,7 +986,6 @@ textarea:focus { border-color: var(--accent3); }
       </div>
     </div>
 
-    <!-- SEKME: YAZI -->
     <div class="tab-panel" id="t-text">
       <div class="section-title">Orta Yazı</div>
       <div class="toggle-row">
@@ -1116,7 +1065,6 @@ textarea:focus { border-color: var(--accent3); }
       </div>
     </div>
 
-    <!-- SEKME: GELİŞMİŞ -->
     <div class="tab-panel" id="t-adv">
       <div class="section-title">Milestone İşaretçileri</div>
       <p class="tip">Bara yüzde bazlı işaret ekleyin.</p>
@@ -1150,7 +1098,6 @@ textarea:focus { border-color: var(--accent3); }
 
   </div><!-- end tab-panels -->
 
-  <!-- Status Bar -->
   <div class="status-bar">
     <div class="status-item"><div class="status-dot"></div><span>Canlı</span></div>
     <div class="status-item" id="statusSize">480×60</div>
@@ -1158,9 +1105,7 @@ textarea:focus { border-color: var(--accent3); }
   </div>
 </div>
 
-<!-- ========== ORTA: ÖNİZLEME ========== -->
 <div class="preview-area" id="previewArea">
-  <!-- Arka plan swatchleri -->
   <div class="bg-switcher">
     <div class="bg-swatch active" style="background:#0c0c10;" data-bg="#0c0c10" title="Koyu"></div>
     <div class="bg-swatch" style="background:#1a1030;" data-bg="#1a1030" title="Koyu Mor"></div>
@@ -1171,14 +1116,12 @@ textarea:focus { border-color: var(--accent3); }
     <div class="bg-swatch" style="background:linear-gradient(135deg,#4facfe,#00f2fe);" data-bg="gradient3" title="Mavi"></div>
   </div>
 
-  <!-- Zoom kontrolleri -->
   <div class="preview-controls">
     <button class="preview-ctrl-btn" onclick="changeZoom(-0.1)" title="Küçült">−</button>
     <button class="preview-ctrl-btn" onclick="changeZoom(0)" title="Sıfırla">⟳</button>
     <button class="preview-ctrl-btn" onclick="changeZoom(0.1)" title="Büyüt">+</button>
   </div>
 
-  <!-- Ana Widget -->
   <div class="widget-canvas" id="widgetCanvas">
     <div class="widget-wrapper" id="widgetWrapper">
       <div class="progress-container" id="progressContainer">
@@ -1197,7 +1140,6 @@ textarea:focus { border-color: var(--accent3); }
     </div>
   </div>
 
-  <!-- Test Slider -->
   <div class="test-area">
     <div class="cg">
       <label>Test İlerlemesi &nbsp; <span class="val" id="vTestVal">50</span> / <span id="testGoalLabel">100</span></label>
@@ -1206,7 +1148,6 @@ textarea:focus { border-color: var(--accent3); }
   </div>
 </div>
 
-<!-- ========== SAĞ PANEL ========== -->
 <div class="sidebar right">
   <div class="sidebar-header">
     <h1><span class="logo-dot" style="background:var(--accent2);box-shadow:0 0 12px var(--accent2)"></span>Tasarımlarım</h1>
@@ -1237,13 +1178,9 @@ textarea:focus { border-color: var(--accent3); }
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// STATE
-// ============================================================
 const DEFAULT_STATE = {
   width: 480, height: 60, radius: 14,
   borderW: 1, borderColor: '#ffffff', borderOp: 15,
@@ -1275,9 +1212,6 @@ let milestoneIdCounter = 0;
 
 function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
-// ============================================================
-// ELEMENT REF
-// ============================================================
 const wrapper = document.getElementById('widgetWrapper');
 const container = document.getElementById('progressContainer');
 const fillBar = document.getElementById('progressBar');
@@ -1290,9 +1224,6 @@ const milestonesContainer = document.getElementById('milestonesContainer');
 const testSlider = document.getElementById('testSlider');
 const reflectionElem = document.getElementById('reflectionElem');
 
-// ============================================================
-// SAYISAL FORMAT
-// ============================================================
 function fmtNum(n, format) {
   n = Number(n);
   switch(format) {
@@ -1303,9 +1234,6 @@ function fmtNum(n, format) {
   }
 }
 
-// ============================================================
-// HEX / RGB
-// ============================================================
 function hexToRgb(hex) {
   hex = hex.replace('#','');
   if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
@@ -1313,13 +1241,9 @@ function hexToRgb(hex) {
   return [(n>>16)&255, (n>>8)&255, n&255];
 }
 
-// ============================================================
-// ANA GÜNCELLEME
-// ============================================================
 function updateWidget() {
   const s = state;
 
-  // CSS Variables
   wrapper.style.setProperty('--width', s.width + 'px');
   wrapper.style.setProperty('--height', s.height + 'px');
   wrapper.style.setProperty('--radius', s.radius + 'px');
@@ -1346,17 +1270,13 @@ function updateWidget() {
   const glRgb = hexToRgb(s.glowColor);
   wrapper.style.setProperty('--glow-color', `rgba(${glRgb},${s.glowInt/100})`);
 
-  // Backdrop blur
   container.style.backdropFilter = `blur(${s.blur}px)`;
   container.style.webkitBackdropFilter = `blur(${s.blur}px)`;
 
-  // Box shadow
   container.style.boxShadow = `0 ${s.shadowD/2}px ${s.shadowD}px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03)`;
 
-  // Glow
   container.classList.toggle('glow-active', s.glowEnable);
 
-  // Gradient fill style
   if(s.useGradient) {
     fillBar.style.backgroundImage = `linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2})`;
     fillBar.style.backgroundColor = '';
@@ -1365,9 +1285,7 @@ function updateWidget() {
     fillBar.style.backgroundColor = s.fillColor;
   }
 
-  // Stripe classes
   fillBar.classList.toggle('striped', s.stripeEnable);
-  fillBar.classList.toggle('animated-stripe', s.stripeEnable && s.stripeAnim);
   fillBar.classList.toggle('gradient-fill', s.useGradient);
   if(s.stripeEnable) {
     const angle = s.stripeAngle;
@@ -1380,7 +1298,24 @@ function updateWidget() {
     }
   }
 
-  // Fill Anim
+  let animations = [];
+
+  if(s.stripeEnable && s.stripeAnim) {
+    const angleRad = s.stripeAngle * Math.PI / 180;
+    const sinA = Math.sin(angleRad);
+    const cosA = Math.cos(angleRad);
+    const dx = (20 * sinA).toFixed(2);
+    const dy = (-20 * cosA).toFixed(2);
+    let dynStyle = document.getElementById('dynStripeAnim');
+    if(!dynStyle) { dynStyle = document.createElement('style'); dynStyle.id = 'dynStripeAnim'; document.head.appendChild(dynStyle); }
+    if(s.useGradient) {
+      dynStyle.textContent = `@keyframes moveStripes { 0% { background-position: 0 0, 0 0; } 100% { background-position: ${dx}px ${dy}px, 0 0; } }`;
+    } else {
+      dynStyle.textContent = `@keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: ${dx}px ${dy}px; } }`;
+    }
+    animations.push('moveStripes 0.8s linear infinite');
+  }
+
   fillBar.classList.remove('pulse-anim','shimmer-anim');
   if(s.fillAnim === 'pulse') {
     fillBar.classList.add('pulse-anim');
@@ -1388,6 +1323,7 @@ function updateWidget() {
     wrapper.style.setProperty('--pulse-speed', s.pulseSpeed + 's');
     wrapper.style.setProperty('--pulse-spread', s.pulseSpread + 'px');
     wrapper.style.setProperty('--pulse-color', `rgba(${pRgba},${s.pulseInt/100})`);
+    animations.push(`pulseGlow ${s.pulseSpeed}s ease-in-out infinite`);
   }
   if(s.fillAnim === 'shimmer') {
     fillBar.classList.add('shimmer-anim');
@@ -1396,16 +1332,16 @@ function updateWidget() {
     wrapper.style.setProperty('--shimmer-color', `rgba(${sRgba},${s.shimmerInt/100})`);
   }
 
-  // Inner shadow
+  fillBar.style.animation = 'none';
+  fillBar.offsetHeight;
+  fillBar.style.animation = animations.length ? animations.join(', ') : '';
+
   container.classList.toggle('bar-inner-shadow', s.innerShadow);
 
-  // Reflection
   reflectionElem.style.display = s.reflection ? 'block' : 'none';
 
-  // Global font
   wrapper.style.fontFamily = s.globalFont;
 
-  // Center label
   centerLabelElem.style.display = s.showCenter ? '' : 'none';
   centerLabelElem.textContent = s.centerText;
   centerLabelElem.style.color = s.centerColor;
@@ -1414,7 +1350,6 @@ function updateWidget() {
   centerLabelElem.style.fontWeight = s.centerWeight;
   centerLabelElem.style.fontFamily = s.centerFont;
 
-  // Numbers
   const prefix = s.prefix || '';
   const suffix = s.suffix || '';
   const fmtCurrent = prefix + fmtNum(s.currentVal, s.numFormat) + suffix;
@@ -1430,34 +1365,25 @@ function updateWidget() {
   goalElem.style.fontSize = s.numSize + 'px';
   goalElem.style.color = s.textColor;
 
-  // Pct Badge
   const pct = Math.min(Math.round((s.currentVal / s.goalVal) * 100), 100) || 0;
   pctBadge.style.display = s.showPct ? '' : 'none';
   pctBadge.textContent = pct + '%';
 
-  // Fill width
   fillBar.style.width = pct + '%';
 
-  // Test slider sync
   testSlider.max = s.goalVal;
   testSlider.value = s.currentVal;
   document.getElementById('vTestVal').textContent = fmtNum(s.currentVal, s.numFormat);
   document.getElementById('testGoalLabel').textContent = fmtNum(s.goalVal, s.numFormat);
 
-  // Milestones
   renderMilestones();
 
-  // Status bar
   document.getElementById('statusSize').textContent = `${s.width}×${s.height}`;
   document.getElementById('statusPct').textContent = pct;
 
-  // Save last state
   localStorage.setItem('barLastStateV2', JSON.stringify(state));
 }
 
-// ============================================================
-// MİLESTONE RENDER
-// ============================================================
 function renderMilestones() {
   milestonesContainer.innerHTML = '';
   (state.milestones || []).forEach(m => {
@@ -1470,9 +1396,6 @@ function renderMilestones() {
   });
 }
 
-// ============================================================
-// MİLESTONE UI
-// ============================================================
 function addMilestone() {
   const id = ++milestoneIdCounter;
   state.milestones = state.milestones || [];
@@ -1503,9 +1426,6 @@ function removeMilestone(idx) {
   updateWidget();
 }
 
-// ============================================================
-// PARTİKÜL SİSTEMİ
-// ============================================================
 let bounceParticles = [];
 let bounceAnimFrame = null;
 
@@ -1578,9 +1498,6 @@ function animateBounceParticles() {
   bounceAnimFrame = requestAnimationFrame(animateBounceParticles);
 }
 
-// ============================================================
-// INPUT BAĞLAMA SİSTEMİ
-// ============================================================
 function bind(id, prop, opts = {}) {
   const el = document.getElementById(id);
   if(!el) return;
@@ -1617,7 +1534,6 @@ function bind(id, prop, opts = {}) {
   }
 }
 
-// Bağlamalar
 bind('cWidth', 'width', {label:'vWidth'});
 bind('cHeight', 'height', {label:'vHeight'});
 bind('cRadius', 'radius', {label:'vRadius'});
@@ -1684,12 +1600,10 @@ bind('cGlobalFont', 'globalFont');
 bind('cCurrentVal', 'currentVal', {onChange: v => {state.currentVal=+v; document.getElementById('testSlider').value=v; updateWidget();}});
 bind('cGoalVal', 'goalVal');
 
-// Partikül sayısı (change + input)
 const pCountEl = document.getElementById('cPartCount');
 pCountEl.addEventListener('change', e => { state.partCount = +e.target.value; generateParticles(); });
 pCountEl.addEventListener('input', e => { document.getElementById('vPartCount').textContent = e.target.value; });
 
-// Test slider
 testSlider.addEventListener('input', e => {
   state.currentVal = +e.target.value;
   document.getElementById('vTestVal').textContent = fmtNum(state.currentVal, state.numFormat);
@@ -1697,9 +1611,6 @@ testSlider.addEventListener('input', e => {
   updateWidget();
 });
 
-// ============================================================
-// SEKME SİSTEMİ
-// ============================================================
 document.getElementById('tab-nav').addEventListener('click', e => {
   const btn = e.target.closest('.tab-btn');
   if(!btn) return;
@@ -1709,9 +1620,6 @@ document.getElementById('tab-nav').addEventListener('click', e => {
   document.getElementById(btn.dataset.tab).classList.add('active');
 });
 
-// ============================================================
-// ŞEKİL PRESETLER
-// ============================================================
 function applyShape(type) {
   document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
@@ -1724,18 +1632,12 @@ function applyShape(type) {
   updateWidget();
 }
 
-// ============================================================
-// ZOOM
-// ============================================================
 function changeZoom(delta) {
   if(delta === 0) { zoomLevel = 1; }
   else { zoomLevel = Math.max(0.3, Math.min(2, zoomLevel + delta)); }
   document.getElementById('widgetCanvas').style.transform = `scale(${zoomLevel})`;
 }
 
-// ============================================================
-// ÖNIZLEME ARKA PLANI
-// ============================================================
 document.querySelectorAll('.bg-swatch').forEach(sw => {
   sw.addEventListener('click', () => {
     document.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
@@ -1749,9 +1651,6 @@ document.querySelectorAll('.bg-swatch').forEach(sw => {
   });
 });
 
-// ============================================================
-// PRESET SİSTEMİ
-// ============================================================
 function savePreset() {
   const nameInput = document.getElementById('presetName');
   const name = nameInput.value.trim();
@@ -1784,7 +1683,6 @@ function renderPresets() {
   const names = Object.keys(presets);
   empty.style.display = names.length ? 'none' : '';
 
-  // Mevcut kartları kaldır (empty-state hariç)
   [...cards.children].forEach(c => { if(!c.id) cards.removeChild(c); });
 
   names.forEach(name => {
@@ -1793,7 +1691,6 @@ function renderPresets() {
     card.className = 'preset-card';
     card.onclick = () => loadPreset(name);
 
-    // Küçük önizleme
     const preview = document.createElement('div');
     preview.className = 'preset-card-preview';
     preview.style.background = (() => {
@@ -1802,7 +1699,6 @@ function renderPresets() {
     })();
     preview.style.backgroundColor = '#08080f';
 
-    // Mini bar
     const miniTrack = document.createElement('div');
     miniTrack.style.cssText = `position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;`;
 
@@ -1824,7 +1720,6 @@ function renderPresets() {
     miniBg.appendChild(miniFill);
     miniTrack.appendChild(miniBg);
 
-    // Mini label
     const miniLabel = document.createElement('div');
     miniLabel.style.cssText = `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:9px;color:rgba(255,255,255,0.7);font-weight:700;letter-spacing:1px;white-space:nowrap;font-family:'Outfit',sans-serif;text-transform:uppercase;`;
     miniLabel.textContent = ps.centerText || '';
@@ -1848,9 +1743,6 @@ function renderPresets() {
   });
 }
 
-// ============================================================
-// UI'DAN STATE'E SENKRONIZASYON
-// ============================================================
 function updateUIFromState() {
   const s = state;
   const setVal = (id, v) => { const el = document.getElementById(id); if(el) el.value = v; };
@@ -1924,9 +1816,6 @@ function updateUIFromState() {
   updateWidget();
 }
 
-// ============================================================
-// JSON İÇE/DIŞA AKTARMA
-// ============================================================
 function exportJSON() {
   const json = JSON.stringify({ version: '2.0', info: 'Bar Editörü Pro', settings: state }, null, 2);
   document.getElementById('jsonIO').value = json;
@@ -1945,9 +1834,6 @@ function importJSON() {
   } catch(e) { showToast('JSON hatası!'); }
 }
 
-// ============================================================
-// CSS / HTML KOPYALAMA
-// ============================================================
 function copyCSSCode() {
   const s = state;
   const bgRgb = hexToRgb(s.bgColor);
@@ -1976,9 +1862,6 @@ function copyHTMLCode() {
   showToast('HTML kopyalandı!');
 }
 
-// ============================================================
-// BOT İÇİN DIŞA AKTARMA
-// ============================================================
 function exportForBot() {
   const s = state;
   const bgRgb = hexToRgb(s.bgColor);
@@ -1989,14 +1872,12 @@ function exportForBot() {
   const prefix = s.prefix || '';
   const suffix = s.suffix || '';
 
-  // Partiküller HTML
   let particlesHTML = '';
   const partCount = parseInt(s.partCount);
   for(let i = 0; i < partCount; i++) {
     particlesHTML += `<div class="particle p${i+1}"></div>`;
   }
 
-  // Partikül CSS
   let particleCSS = '';
   const partSize = parseFloat(s.partSize);
   const partSpeed = parseFloat(s.partSpeed);
@@ -2015,7 +1896,6 @@ function exportForBot() {
     particleCSS += `.p${i+1} { width: ${sz}px; height: ${sz}px; top: ${top}%; left: ${left}%; animation: ${animName} ${dur}s infinite linear ${del}s ${dir}; ${shapeCSS} }\n`;
   }
 
-  // Fill background
   let fillBg = '';
   if(s.useGradient && s.stripeEnable) {
     fillBg = `background-image: repeating-linear-gradient(${s.stripeAngle}deg, rgba(${stRgb},${s.stripeOp/100}) 0px, rgba(${stRgb},${s.stripeOp/100}) 10px, transparent 10px, transparent 20px), linear-gradient(${s.gradAngle}deg, ${s.fillColor1}, ${s.fillColor2});`;
@@ -2027,7 +1907,6 @@ function exportForBot() {
     fillBg = `background-color: ${s.fillColor};`;
   }
 
-  // Animations
   let animCSS = '';
   let animClass = '';
   if(s.fillAnim === 'pulse') {
@@ -2046,20 +1925,17 @@ function exportForBot() {
     stripeAnimCSS = `@keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }\n`;
   }
 
-  // Shimmer after pseudo
   let shimmerAfter = '';
   if(s.fillAnim === 'shimmer') {
     const shimRgb = hexToRgb(s.shimmerColor);
     shimmerAfter = `.progress-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(${shimRgb},${s.shimmerInt/100}) 50%, transparent 100%); background-size: 200% 100%; animation: shimmerAnim ${s.shimmerSpeed}s ease-in-out infinite; }\n`;
   }
 
-  // Milestone markers
   let milestoneHTML = '';
   (s.milestones || []).forEach(m => {
     milestoneHTML += `<div class="milestone-marker" style="left:${m.pct}%;background:${m.color||'rgba(255,255,255,0.4)'}" data-label="${m.pct}%"></div>\n`;
   });
 
-  // Build HTML
   const botHTML = `<div class="progress-container">
     <div class="current-in-bar" id="current-messages">${prefix}0${suffix}</div>
     <div class="center-label">${s.showCenter ? s.centerText : ''}</div>
@@ -2074,7 +1950,6 @@ function exportForBot() {
     <div class="goal-top" id="goal-messages">${prefix}0${suffix}</div>
 </div>`;
 
-  // Build JS
   const botJS = `const MESSAGE_GOAL = ${s.goalVal};
 const currentMsgElem = document.getElementById('current-messages');
 const goalMsgElem = document.getElementById('goal-messages');
@@ -2096,7 +1971,6 @@ document.addEventListener('widgetEvent', function (event) {
     }
 });`;
 
-  // Build CSS
   const botCSS = `:root {
     --bar-bg: rgba(${bgRgb}, ${s.bgOp/100});
     --bar-fill: ${s.fillColor};
@@ -2226,7 +2100,6 @@ ${s.showPct ? `.percentage-badge {
 
   const botFile = botHTML + '\n' + botJS + '\n' + botCSS;
 
-  // Dosyayı indir
   const blob = new Blob([botFile], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -2237,9 +2110,6 @@ ${s.showPct ? `.percentage-badge {
   showToast('Bot dosyası indirildi!');
 }
 
-// ============================================================
-// SIFIRLA
-// ============================================================
 function resetToDefault() {
   if(!confirm('Tüm ayarlar sıfırlansın mı?')) return;
   state = deepClone(DEFAULT_STATE);
@@ -2247,9 +2117,6 @@ function resetToDefault() {
   showToast('Varsayılana dönüldü');
 }
 
-// ============================================================
-// TOAST
-// ============================================================
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -2257,9 +2124,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ============================================================
-// BAŞLANGIÇ
-// ============================================================
 window.onload = () => {
   const saved = localStorage.getItem('barLastStateV2');
   if(saved) {
