@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bar Editörü</title>
+<title>Bar Editörü Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2115,7 +2115,7 @@ ${s.showPct ? `.percentage-badge {
     pointer-events: none;
 }`;
 
-  const botFile = botHTML + '\n' + botJS + '\n' + botCSS;
+ const botFile = 'HTML\n' + botHTML + '\n\nCSS\n' + botCSS + '\n\nJS\n' + botJS;
 
   const blob = new Blob([botFile], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
